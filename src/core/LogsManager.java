@@ -35,7 +35,13 @@ public class LogsManager extends javax.swing.JFrame {
     static int fontSize = 18;
 
     public LogsManager(){
-
+        //todo:
+        /**
+         * Lägg till följande:
+         * keystrokes för menyn
+         * delete log by id
+         * historik för ändringar av logs
+         */
     }
     private static void confirmExit() {
         //int dialogResult = JOptionPane.showConfirmDialog (null, "ARE YOU SURE YOU WANT TO EXIT THIS APPLICATION? ", MessageBoxTitle, JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
