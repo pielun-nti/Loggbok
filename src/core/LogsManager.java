@@ -27,6 +27,7 @@ public class LogsManager extends javax.swing.JFrame {
     static JMenuItem menuItemEditLog;
     static JMenuItem menuItemExit;
     static JTextArea txtLogs;
+    static JMenuItem menuItemChangeFontSize;
     private JPanel mainPanel;
     private static String MessageBoxTitle = "LogsManager GUI";
     private static String openedFile = null;
@@ -81,6 +82,7 @@ public class LogsManager extends javax.swing.JFrame {
         editMenu.setFont(mainFont);
         settingsMenu.setFont(mainFont);
         aboutMenu.setFont(mainFont);
+        menuItemChangeFontSize = new JMenuItem("Change Font Size");
         menuItemEditLog = new JMenuItem("Edit Log");
         menuItemEditLog.setFont(mainFont);
         menuItemEditLog.addActionListener(new ActionListener() {
@@ -88,6 +90,23 @@ public class LogsManager extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 String logid = JOptionPane.showInputDialog(null, "Enter ID of the log you want to edit", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
                 //get info from the log, show it then allow editing
+                Statement stmt= null;
+                try {
+                    stmt = connection.createStatement();
+
+                    ResultSet rs=stmt.executeQuery("select * from logs");
+                    txtLogs.setText("");
+                    while(rs.next())
+                        if (txtLogs.getText().trim().equals("")) {
+                            txtLogs.setText(rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
+                        }else{
+                            txtLogs.append("\r\n--------------\r\n" + rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
+                        }
+                    //JOptionPane.showMessageDialog(null, rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));
+                    //con.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         });
         menuItemGetLogs = new JMenuItem("Get All Logs");
@@ -101,6 +120,7 @@ public class LogsManager extends javax.swing.JFrame {
                     stmt = connection.createStatement();
 
                 ResultSet rs=stmt.executeQuery("select * from logs");
+                txtLogs.setText("");
                 while(rs.next())
                     if (txtLogs.getText().trim().equals("")) {
                         txtLogs.setText(rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
@@ -132,6 +152,16 @@ public class LogsManager extends javax.swing.JFrame {
 
             }
         });
+        menuItemChangeFontSize.setFont(mainFont);
+        menuItemChangeFontSize.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                fontSize = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter new font size ( current = " + fontSize + ")", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE));
+                mainFont = new Font("Verdana", Font.BOLD, fontSize);
+                txtLogs.setFont(mainFont);
+                frame.setFont(mainFont);
+            }
+        });
         menuItemExit = new JMenuItem("Exit application");
         menuItemExit.addActionListener(new ActionListener() {
             @Override
@@ -145,8 +175,9 @@ public class LogsManager extends javax.swing.JFrame {
         fileMenu.add(menuItemEditLog);
         fileMenu.add(menuItemGetLogs);
         fileMenu.add(menuItemExit);
+        editMenu.add(menuItemChangeFontSize);
         menuBar.add(fileMenu);
-        //menuBar.add(editMenu);
+        menuBar.add(editMenu);
         //menuBar.add(settingsMenu);
         menuBar.add(aboutMenu);
         frame.setJMenuBar(menuBar);
