@@ -88,22 +88,36 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemEditLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                String logid = JOptionPane.showInputDialog(null, "Enter ID of the log you want to edit", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
+                int logid = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter ID of the log you want to edit", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
+                if (logid < 0){
+                    JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
                 //get info from the log, show it then allow editing
                 Statement stmt= null;
                 try {
                     stmt = connection.createStatement();
 
-                    ResultSet rs=stmt.executeQuery("select * from logs");
-                    txtLogs.setText("");
-                    while(rs.next())
-                        if (txtLogs.getText().trim().equals("")) {
-                            txtLogs.setText(rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
-                        }else{
-                            txtLogs.append("\r\n--------------\r\n" + rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
+                    ResultSet rs=stmt.executeQuery("select * from logs where id = " + logid);
+                    if (rs == null){
+                        JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                    while(rs.next()) {
+                        String logauthor = (String) JOptionPane.showInputDialog(null, "Edit author for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(2));
+                        if (!logauthor.trim().equals(rs.getString(1))){
+                            stmt = (Statement) connection.createStatement();
+                            String query1 = "update logs set author='" + logauthor + "' " + "where id in(" + logid + ")";
+                            stmt.executeUpdate(query1);
                         }
-                    //JOptionPane.showMessageDialog(null, rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));
-                    //con.close();
+                        String logbody = (String) JOptionPane.showInputDialog(null, "Edit body for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(3));
+                        if (!logbody.trim().equals(rs.getString(2))){
+                            stmt = (Statement) connection.createStatement();
+                            String query1 = "update logs set body='" + logbody + "' " + "where id in(" + logid + ")";
+                            stmt.executeUpdate(query1);
+                        }
+                    }
+                    JOptionPane.showMessageDialog(null, "Successfully updated author and body for log id: " + logid, MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
