@@ -25,6 +25,8 @@ public class LogsManager extends javax.swing.JFrame {
     static JMenuItem menuitemNewLog;
     static JMenuItem menuItemGetLogs;
     static JMenuItem menuItemEditLog;
+    static JMenuItem menuItemDeleteLog;
+    static JMenuItem menuItemShowLogHistory;
     static JMenuItem menuItemExit;
     static JTextArea txtLogs;
     static JMenuItem menuItemChangeFontSize;
@@ -40,7 +42,8 @@ public class LogsManager extends javax.swing.JFrame {
          * Lägg till följande:
          * keystrokes för menyn
          * delete log by id
-         * historik för ändringar av logs
+         * historik för ändringar av logs (skapa ett nytt table i databasen som heter changes eller history)
+         * gör db dump i slutet
          */
     }
     private static void confirmExit() {
@@ -193,6 +196,7 @@ public class LogsManager extends javax.swing.JFrame {
                     stmt = (Statement) connection.createStatement();
                     String query1 = "update logs set author='" + logauthor + "' " + "where id in(" + logid + ")";
                     stmt.executeUpdate(query1);
+                    //also update changes here
                 }
                 String logbody = (String) JOptionPane.showInputDialog(null, "Edit body for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(3));
                 if (logbody == null){
@@ -207,6 +211,7 @@ public class LogsManager extends javax.swing.JFrame {
                     stmt = (Statement) connection.createStatement();
                     String query1 = "update logs set body='" + logbody + "' " + "where id in(" + logid + ")";
                     stmt.executeUpdate(query1);
+                    //also updates changes here
                 }
             }
             JOptionPane.showMessageDialog(null, "Successfully updated author and body for log id: " + logid, MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
@@ -230,6 +235,7 @@ public class LogsManager extends javax.swing.JFrame {
             String query1 = "INSERT INTO logs (author, body)" + "VALUES ('" + author + "', '" + body + "')";
             Statement stmt = (Statement) connection.createStatement();
             stmt.executeUpdate(query1);
+            //also update changes here
             JOptionPane.showMessageDialog(null, "Inserted New Log Into Database Successfully!");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -262,9 +268,19 @@ public class LogsManager extends javax.swing.JFrame {
         try {
             connection = DriverManager.getConnection(conURL, user, pass);
         } catch (SQLException e) {
-            e.printStackTrace();
-            success = false;
-            JOptionPane.showMessageDialog(null, "InitDB SQL Error: " + e.toString());
+            System.out.println("Maybe DB not exist, creating db, then trying to connect again...");
+            try {
+                connection = DriverManager.getConnection
+                        ("jdbc:mysql://localhost:3306/?user=" + user + "&password=" + pass);
+                Statement s=connection.createStatement();
+                int result =s.executeUpdate("CREATE DATABASE logs");
+                connection.close();
+                connection = DriverManager.getConnection(conURL, user, pass);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                success = false;
+                JOptionPane.showMessageDialog(null, "InitDB SQL Error: " + e.toString());
+            }
         }
         return success;
     }
