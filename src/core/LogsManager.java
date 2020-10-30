@@ -273,9 +273,22 @@ public class LogsManager extends javax.swing.JFrame {
                 connection = DriverManager.getConnection
                         ("jdbc:mysql://localhost:3306/?user=" + user + "&password=" + pass);
                 Statement s=connection.createStatement();
-                int result =s.executeUpdate("CREATE DATABASE logs");
+                int result =s.executeUpdate("CREATE DATABASE " + Env.dbName);
                 connection.close();
                 connection = DriverManager.getConnection(conURL, user, pass);
+                String create_logs_table="CREATE TABLE logs ("
+                        + "ID INT NOT NULL,"
+                        + "AUTHOR VARCHAR(45) NOT NULL,"
+                        + "BODY DATE NOT NULL)";
+                String create_changes_table="CREATE TABLE changes ("
+                        + "ID INT NOT NULL,"
+                        + "LOGID INT NOT NULL,"
+                        + "AUTHOR VARCHAR(45) NOT NULL,"
+                        + "BODY DATE NOT NULL)";
+                s = connection.createStatement();
+                s.executeUpdate(create_logs_table);
+                s = connection.createStatement();
+                s.executeUpdate(create_changes_table);
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 success = false;
