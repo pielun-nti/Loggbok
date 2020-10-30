@@ -181,12 +181,28 @@ public class LogsManager extends javax.swing.JFrame {
             }
             while(rs.next()) {
                 String logauthor = (String) JOptionPane.showInputDialog(null, "Edit author for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(2));
+                if (logauthor == null){
+                    JOptionPane.showMessageDialog(null, "Author cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (logauthor.trim().equals("")){
+                    JOptionPane.showMessageDialog(null, "Author must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 if (!logauthor.trim().equals(rs.getString(1))){
                     stmt = (Statement) connection.createStatement();
                     String query1 = "update logs set author='" + logauthor + "' " + "where id in(" + logid + ")";
                     stmt.executeUpdate(query1);
                 }
                 String logbody = (String) JOptionPane.showInputDialog(null, "Edit body for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(3));
+                if (logbody == null){
+                    JOptionPane.showMessageDialog(null, "Body cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (logbody.trim().equals("")){
+                    JOptionPane.showMessageDialog(null, "Body must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 if (!logbody.trim().equals(rs.getString(2))){
                     stmt = (Statement) connection.createStatement();
                     String query1 = "update logs set body='" + logbody + "' " + "where id in(" + logid + ")";
