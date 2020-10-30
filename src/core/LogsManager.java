@@ -9,6 +9,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.*;
 
@@ -271,21 +272,23 @@ public class LogsManager extends javax.swing.JFrame {
         } catch (SQLException e) {
             System.out.println("Maybe DB not exist, creating db, then trying to connect again...");
             try {
-                connection = DriverManager.getConnection
-                        ("jdbc:mysql://localhost:3306/?user=" + user + "&password=" + pass);
+                String sqlURL = "jdbc:mysql://localhost:3306/?user=" + user + "&password=" + pass + "&characterEncoding=latin1";
+                //använder detta om man har ett % tecken i sitt db lösenord
+                connection = DriverManager.getConnection(sqlURL.replaceAll("%(?![0-9a-fA-F]{2})", "%25"));
+
                 Statement s=connection.createStatement();
                 int result =s.executeUpdate("CREATE DATABASE " + Env.dbName);
                 connection.close();
                 connection = DriverManager.getConnection(conURL, user, pass);
                 String create_logs_table="CREATE TABLE logs ("
-                        + "ID INT NOT NULL,"
-                        + "AUTHOR VARCHAR(45) NOT NULL,"
-                        + "BODY DATE NOT NULL)";
+                        + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+                        + "AUTHOR varchar(255) DEFAULT NULL,"
+                        + "BODY varchar(255) DEFAULT NULL)";
                 String create_changes_table="CREATE TABLE changes ("
-                        + "ID INT NOT NULL,"
-                        + "LOGID INT NOT NULL,"
-                        + "AUTHOR VARCHAR(45) NOT NULL,"
-                        + "BODY DATE NOT NULL)";
+                        + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+                        + "LOGID int unsigned NOT NULL,"
+                        + "AUTHOR varchar(255) DEFAULT NULL,"
+                        + "BODY varchar(255) DEFAULT NULL)";
                 s = connection.createStatement();
                 s.executeUpdate(create_logs_table);
                 s = connection.createStatement();
