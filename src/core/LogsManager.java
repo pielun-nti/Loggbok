@@ -88,39 +88,7 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemEditLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                int logid = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter ID of the log you want to edit", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
-                if (logid < 0){
-                    JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
-                    return;
-                }
-                //get info from the log, show it then allow editing
-                Statement stmt= null;
-                try {
-                    stmt = connection.createStatement();
-
-                    ResultSet rs=stmt.executeQuery("select * from logs where id = " + logid);
-                    if (rs == null){
-                        JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
-                        return;
-                    }
-                    while(rs.next()) {
-                        String logauthor = (String) JOptionPane.showInputDialog(null, "Edit author for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(2));
-                        if (!logauthor.trim().equals(rs.getString(1))){
-                            stmt = (Statement) connection.createStatement();
-                            String query1 = "update logs set author='" + logauthor + "' " + "where id in(" + logid + ")";
-                            stmt.executeUpdate(query1);
-                        }
-                        String logbody = (String) JOptionPane.showInputDialog(null, "Edit body for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(3));
-                        if (!logbody.trim().equals(rs.getString(2))){
-                            stmt = (Statement) connection.createStatement();
-                            String query1 = "update logs set body='" + logbody + "' " + "where id in(" + logid + ")";
-                            stmt.executeUpdate(query1);
-                        }
-                    }
-                    JOptionPane.showMessageDialog(null, "Successfully updated author and body for log id: " + logid, MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                editLog();
             }
         });
         menuItemGetLogs = new JMenuItem("Get All Logs");
@@ -128,42 +96,14 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemGetLogs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //String author = JOptionPane.showInputDialog(null, "Enter log author", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
-                Statement stmt= null;
-                try {
-                    stmt = connection.createStatement();
-
-                ResultSet rs=stmt.executeQuery("select * from logs");
-                txtLogs.setText("");
-                while(rs.next())
-                    if (txtLogs.getText().trim().equals("")) {
-                        txtLogs.setText(rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
-                    }else{
-                        txtLogs.append("\r\n--------------\r\n" + rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
-                    }
-                    //JOptionPane.showMessageDialog(null, rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));
-                //con.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                getAllLogs();
             }
         });
         menuitemNewLog = new JMenuItem("Create New Log");
         menuitemNewLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                String author = (JOptionPane.showInputDialog(null, "Enter log author", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
-                String body = (JOptionPane.showInputDialog(null, "Enter log body", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
-                try {
-                    String query1 = "INSERT INTO logs (author, body)" + "VALUES ('" + author + "', '" + body + "')";
-                    Statement stmt = (Statement) connection.createStatement();
-                    stmt.executeUpdate(query1);
-                    JOptionPane.showMessageDialog(null, "Inserted New Log Into Database Successfully!");
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "Insertion to Mysql Database Failure: " + e.toString());
-                }
-
+                createNewLog();
             }
         });
         menuItemChangeFontSize.setFont(mainFont);
@@ -197,6 +137,82 @@ public class LogsManager extends javax.swing.JFrame {
         frame.setJMenuBar(menuBar);
         frame.add(txtLogs);
         frame.setVisible(true);
+    }
+
+    static void getAllLogs(){
+        Statement stmt= null;
+        try {
+            stmt = connection.createStatement();
+
+            ResultSet rs=stmt.executeQuery("select * from logs");
+            txtLogs.setText("");
+            while(rs.next())
+                if (txtLogs.getText().trim().equals("")) {
+                    txtLogs.setText(rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
+                }else{
+                    txtLogs.append("\r\n--------------\r\n" + rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
+                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void editLog(){
+        int logid = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter ID of the log you want to edit", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
+        if (logid < 0){
+            JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        //get info from the log, show it then allow editing
+        Statement stmt= null;
+        try {
+            stmt = connection.createStatement();
+
+            ResultSet rs=stmt.executeQuery("select * from logs where id = " + logid);
+            if (rs == null){
+                JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            while(rs.next()) {
+                String logauthor = (String) JOptionPane.showInputDialog(null, "Edit author for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(2));
+                if (!logauthor.trim().equals(rs.getString(1))){
+                    stmt = (Statement) connection.createStatement();
+                    String query1 = "update logs set author='" + logauthor + "' " + "where id in(" + logid + ")";
+                    stmt.executeUpdate(query1);
+                }
+                String logbody = (String) JOptionPane.showInputDialog(null, "Edit body for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(3));
+                if (!logbody.trim().equals(rs.getString(2))){
+                    stmt = (Statement) connection.createStatement();
+                    String query1 = "update logs set body='" + logbody + "' " + "where id in(" + logid + ")";
+                    stmt.executeUpdate(query1);
+                }
+            }
+            JOptionPane.showMessageDialog(null, "Successfully updated author and body for log id: " + logid, MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void createNewLog(){
+        String author = (JOptionPane.showInputDialog(null, "Enter log author", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
+        String body = (JOptionPane.showInputDialog(null, "Enter log body", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
+        if (author == null || body == null){
+            JOptionPane.showMessageDialog(null, "Author or body cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (author.trim().equals("") || body.trim().equals("")){
+            JOptionPane.showMessageDialog(null, "Author and body must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            String query1 = "INSERT INTO logs (author, body)" + "VALUES ('" + author + "', '" + body + "')";
+            Statement stmt = (Statement) connection.createStatement();
+            stmt.executeUpdate(query1);
+            JOptionPane.showMessageDialog(null, "Inserted New Log Into Database Successfully!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Insertion to Mysql Database Failure: " + e.toString());
+        }
     }
 
     public static boolean initDB(){
