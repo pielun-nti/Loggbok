@@ -6,7 +6,7 @@ package core;
 public class Envexample {
     public static String dbName = "logs";
     public static String driverName ="com.mysql.jdbc.Driver";
-    public static String conURL = "jdbc:mysql://localhost:3306/logs?characterEncoding=latin1";
+    public static String conURL = "jdbc:mysql://localhost:3306/" + dbName + "?characterEncoding=latin1";
     public static String user = "";
     public static String pass = "";
 
