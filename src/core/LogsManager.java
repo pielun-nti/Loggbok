@@ -26,6 +26,7 @@ public class LogsManager extends javax.swing.JFrame {
     static JMenuItem menuItemGetLogs;
     static JMenuItem menuItemEditLog;
     static JMenuItem menuItemExit;
+    static JTextArea txtLogs;
     private JPanel mainPanel;
     private static String MessageBoxTitle = "LogsManager GUI";
     private static String openedFile = null;
@@ -63,7 +64,10 @@ public class LogsManager extends javax.swing.JFrame {
         Dimension res = new Dimension(1200, 800);
         frame.setPreferredSize(res);
         frame.setSize(res);
+        txtLogs = new JTextArea();
+        txtLogs.setEditable(true);
         mainFont = new Font("Verdana", Font.BOLD, fontSize);
+        txtLogs.setFont(mainFont);
         frame.setFont(mainFont);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
@@ -98,7 +102,12 @@ public class LogsManager extends javax.swing.JFrame {
 
                 ResultSet rs=stmt.executeQuery("select * from logs");
                 while(rs.next())
-                    JOptionPane.showMessageDialog(null, rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));
+                    if (txtLogs.getText().trim().equals("")) {
+                        txtLogs.setText(rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
+                    }else{
+                        txtLogs.append("\r\n--------------\r\n" + rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
+                    }
+                    //JOptionPane.showMessageDialog(null, rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));
                 //con.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -141,6 +150,7 @@ public class LogsManager extends javax.swing.JFrame {
         //menuBar.add(settingsMenu);
         menuBar.add(aboutMenu);
         frame.setJMenuBar(menuBar);
+        frame.add(txtLogs);
         frame.setVisible(true);
     }
 
