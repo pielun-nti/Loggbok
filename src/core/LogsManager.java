@@ -114,7 +114,6 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemChangeFontSize = new JMenuItem("Change Font Size");
         menuItemShowLogHistory = new JMenuItem("Get Logs Changes History");
         menuItemAbout = new JMenuItem("About");
-
     }
 
     static void addListeners(){
