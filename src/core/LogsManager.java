@@ -1,5 +1,7 @@
 package core;
 
+import sun.plugin2.message.Message;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +35,8 @@ public class LogsManager extends javax.swing.JFrame {
     static JMenuItem menuItemEditLog;
     static JMenuItem menuItemDeleteLog;
     static JMenuItem menuItemShowLogHistory;
+    static JMenuItem menuItemDeleteAllLogs;
+    static JMenuItem menuItemDeleteLogHistory;
     static JMenuItem menuItemExit;
     static JTextArea txtLogs;
     static JMenuItem menuItemChangeFontSize;
@@ -110,6 +114,22 @@ public class LogsManager extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 getLogHistory();
+            }
+        });
+        menuItemDeleteAllLogs = new JMenuItem("Delete All Logs");
+        menuItemDeleteAllLogs.setFont(mainFont);
+        menuItemDeleteAllLogs.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                deleteAllLogs();
+            }
+        });
+        menuItemDeleteLogHistory = new JMenuItem("Delete All Logs Changes History");
+        menuItemDeleteLogHistory.setFont(mainFont);
+        menuItemDeleteLogHistory.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                deleteAllLogHistory();
             }
         });
         menuItemDeleteLog = new JMenuItem("Delete Log");
@@ -196,6 +216,40 @@ public class LogsManager extends javax.swing.JFrame {
         }
     }
 
+    static void deleteAllLogs(){
+        Statement stmt= null;
+        try {
+            stmt = connection.createStatement();
+
+            int deletedRows =stmt.executeUpdate("DELETE from logs");
+            if(deletedRows>0){
+                JOptionPane.showMessageDialog(null, "Successfully deleted all logs", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(null, "There are no logs to delete", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void deleteAllLogHistory(){
+        Statement stmt= null;
+        try {
+            stmt = connection.createStatement();
+
+            int deletedRows =stmt.executeUpdate("DELETE from changes");
+            if(deletedRows>0){
+                JOptionPane.showMessageDialog(null, "Successfully deleted all log changes history", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(null, "There are no log changes history to delete", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     static void getLogHistory(){
         Statement stmt= null;
         try {
@@ -236,7 +290,7 @@ public class LogsManager extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            while(rs.next()) {
+            //while(rs.next()) {
                 String logauthor = (String) JOptionPane.showInputDialog(null, "Edit author for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(2));
                 if (logauthor == null){
                     JOptionPane.showMessageDialog(null, "Author cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
@@ -267,7 +321,7 @@ public class LogsManager extends javax.swing.JFrame {
                     stmt.executeUpdate(query1);
                     //also updates changes here
                 }
-            }
+            //}
             JOptionPane.showMessageDialog(null, "Successfully updated author and body for log id: " + logid, MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -291,6 +345,23 @@ public class LogsManager extends javax.swing.JFrame {
                 return;
             }
             //while(rs.next()) {
+
+            //also update changes here
+            String query3 = "select * from changes where logid = " + logid;
+
+            Statement stmt3 = (Statement) connection.createStatement();
+            ResultSet rs2=stmt3.executeQuery(query3);
+            String created_at = null;
+            if (rs2.next()) {
+                created_at = rs2.getString(5);
+            }
+            String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+            String type = "Deletion";
+            String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, body)"
+                    + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + rs.getString(2) + "', '"
+                    + rs.getString(3) + "')";
+            Statement stmt2 = (Statement) connection.createStatement();
+            stmt2.executeUpdate(query2);
             stmt = (Statement) connection.createStatement();
             String query1 = "delete from logs where id = " + logid;
             stmt.executeUpdate(query1);
