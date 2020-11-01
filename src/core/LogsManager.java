@@ -317,6 +317,13 @@ public class LogsManager extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Body must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+            String query4 = "SELECT * from logs where author = '" + logauthor + "' and body = '" + logbody + "'";
+            Statement stmt4 = (Statement) connection.createStatement();
+            ResultSet rs4 = stmt4.executeQuery(query4);
+            if (rs4.next()){
+                JOptionPane.showMessageDialog(null, "A log with exactly identical author and body already exists. Please change.", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
                 if (!logbody.trim().equals(rs.getString(2))){
                     stmt = (Statement) connection.createStatement();
                     String query1 = "update logs set body='" + logbody + "' " + "where id in(" + logid + ")";
