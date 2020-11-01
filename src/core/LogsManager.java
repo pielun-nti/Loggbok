@@ -12,7 +12,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 
 /**
  * Skapad av Pierre 2020-10-29
@@ -81,6 +84,9 @@ public class LogsManager extends javax.swing.JFrame {
         frame.setPreferredSize(res);
         frame.setSize(res);
         txtLogs = new JTextArea();
+        JScrollPane scroll = new JScrollPane (txtLogs,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
         txtLogs.setEditable(true);
         mainFont = new Font("Verdana", Font.BOLD, fontSize);
         txtLogs.setFont(mainFont);
@@ -168,7 +174,7 @@ public class LogsManager extends javax.swing.JFrame {
         //menuBar.add(settingsMenu);
         menuBar.add(aboutMenu);
         frame.setJMenuBar(menuBar);
-        frame.add(txtLogs);
+        frame.add(scroll);
         frame.setVisible(true);
     }
 
@@ -321,8 +327,8 @@ public class LogsManager extends javax.swing.JFrame {
             }
             int logid = rs.getInt(1);
             //also update changes here
-            String created_at = String.valueOf(LocalDateTime.now());
-            String last_edited = String.valueOf(LocalDateTime.now());
+            String created_at = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+            String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             String type = "Creation";
             String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, body)"
                     + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + author + "', '"
