@@ -56,7 +56,7 @@ public class LogsManager extends javax.swing.JFrame {
          * remove log history
          * remove all logs
          * fixa så man inte kan göra log duplicates
-         * gör db dump i slutet
+         * gör db dump i slutet (egentligen behövs ej för om db inte existerar så skapar programmet en)
          */
     }
     private static void confirmExit() {
@@ -402,6 +402,14 @@ public class LogsManager extends javax.swing.JFrame {
             return;
         }
         try {
+            String query4 = "SELECT * from logs where author = '" + author + "' and body = '" + body + "'";
+            Statement stmt4 = (Statement) connection.createStatement();
+            ResultSet rs4 = stmt4.executeQuery(query4);
+            if (rs4.next()){
+                JOptionPane.showMessageDialog(null, "A log with exactly identical author and body already exists. Please change.", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
             String query1 = "INSERT INTO logs (author, body)" + "VALUES ('" + author + "', '" + body + "')";
             Statement stmt = (Statement) connection.createStatement();
             stmt.executeUpdate(query1);
