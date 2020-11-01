@@ -4,14 +4,14 @@ import sun.plugin2.message.Message;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLDecoder;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -37,6 +37,7 @@ public class LogsManager extends javax.swing.JFrame {
     static JMenuItem menuItemShowLogHistory;
     static JMenuItem menuItemDeleteAllLogs;
     static JMenuItem menuItemDeleteLogHistory;
+    static JMenuItem menuItemSaveAs;
     static JMenuItem menuItemExit;
     static JTextArea txtLogs;
     static JMenuItem menuItemChangeFontSize;
@@ -50,12 +51,13 @@ public class LogsManager extends javax.swing.JFrame {
         //todo:
         /**
          * Lägg till följande:
-         * keystrokes för menyn
+         * keystrokes för menyn om tid över
          * delete log by id
          * historik för ändringar av logs (skapa ett nytt table i databasen som heter changes eller history)
          * remove log history
          * remove all logs
          * fixa så man inte kan göra log duplicates
+         * gör så att man kan spara logs/ändringshistorik i en fil via savefiledialog om jag vill
          * gör db dump i slutet (egentligen behövs ej för om db inte existerar så skapar programmet en)
          */
     }
@@ -116,6 +118,14 @@ public class LogsManager extends javax.swing.JFrame {
                 getLogHistory();
             }
         });
+        menuItemSaveAs = new JMenuItem("Save As");
+        menuItemSaveAs.setFont(mainFont);
+        menuItemSaveAs.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                saveFileDialog();
+            }
+        });
         menuItemDeleteAllLogs = new JMenuItem("Delete All Logs");
         menuItemDeleteAllLogs.setFont(mainFont);
         menuItemDeleteAllLogs.addActionListener(new ActionListener() {
@@ -156,7 +166,10 @@ public class LogsManager extends javax.swing.JFrame {
                 getAllLogs();
             }
         });
+        menuItemGetLogs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemShowLogHistory.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
         menuitemNewLog = new JMenuItem("Create New Log");
+        menuitemNewLog.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
         menuitemNewLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -189,6 +202,7 @@ public class LogsManager extends javax.swing.JFrame {
         fileMenu.add(menuItemShowLogHistory);
         fileMenu.add(menuItemDeleteAllLogs);
         fileMenu.add(menuItemDeleteLogHistory);
+        fileMenu.add(menuItemSaveAs);
         fileMenu.add(menuItemExit);
         editMenu.add(menuItemChangeFontSize);
         menuBar.add(fileMenu);
@@ -442,6 +456,38 @@ public class LogsManager extends javax.swing.JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Insertion to Mysql Database Failure: " + e.toString());
+        }
+    }
+
+    private static void saveFileDialog() {
+        final JFileChooser saveAsFileChooser = new JFileChooser();
+        saveAsFileChooser.setApproveButtonText("Save");
+        saveAsFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Text File", "txt"));
+        saveAsFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("HyperText Markup Language", "html"));
+        int actionDialog = saveAsFileChooser.showOpenDialog(null);
+        if (actionDialog != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        // !! File fileName = new File(SaveAs.getSelectedFile() + ".txt");
+        File file = saveAsFileChooser.getSelectedFile();
+        if (!file.getName().endsWith(".html") & (!file.getName().endsWith(".txt"))) {
+            file = new File(file.getAbsolutePath() + ".txt");
+        }
+
+        BufferedWriter outFile = null;
+        try {
+            outFile = new BufferedWriter(new FileWriter(file));
+            outFile.write(txtLogs.getText());
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error writing to saved file", MessageBoxTitle, JOptionPane.WARNING_MESSAGE);
+        } finally {
+            if (outFile != null) {
+                try {
+                    outFile.close();
+                } catch (IOException e) {}
+            }
         }
     }
 
