@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.*;
+import java.time.LocalDateTime;
 
 /**
  * Skapad av Pierre 2020-10-29
@@ -45,6 +46,8 @@ public class LogsManager extends javax.swing.JFrame {
          * keystrokes för menyn
          * delete log by id
          * historik för ändringar av logs (skapa ett nytt table i databasen som heter changes eller history)
+         * remove log history
+         * remove all logs
          * gör db dump i slutet
          */
     }
@@ -94,6 +97,22 @@ public class LogsManager extends javax.swing.JFrame {
         settingsMenu.setFont(mainFont);
         aboutMenu.setFont(mainFont);
         menuItemChangeFontSize = new JMenuItem("Change Font Size");
+        menuItemShowLogHistory = new JMenuItem("Get Log History");
+        menuItemShowLogHistory.setFont(mainFont);
+        menuItemShowLogHistory.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                getLogHistory();
+            }
+        });
+        menuItemDeleteLog = new JMenuItem("Delete Log");
+        menuItemDeleteLog.setFont(mainFont);
+        menuItemDeleteLog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                deleteLog();
+            }
+        });
         menuItemEditLog = new JMenuItem("Edit Log");
         menuItemEditLog.setFont(mainFont);
         menuItemEditLog.addActionListener(new ActionListener() {
@@ -138,7 +157,9 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemExit.setFont(mainFont);
         fileMenu.add(menuitemNewLog);
         fileMenu.add(menuItemEditLog);
+        fileMenu.add(menuItemDeleteLog);
         fileMenu.add(menuItemGetLogs);
+        fileMenu.add(menuItemShowLogHistory);
         fileMenu.add(menuItemExit);
         editMenu.add(menuItemChangeFontSize);
         menuBar.add(fileMenu);
@@ -168,6 +189,29 @@ public class LogsManager extends javax.swing.JFrame {
         }
     }
 
+    static void getLogHistory(){
+        Statement stmt= null;
+        try {
+            stmt = connection.createStatement();
+
+            ResultSet rs=stmt.executeQuery("select * from changes");
+            txtLogs.setText("");
+            while(rs.next())
+                if (txtLogs.getText().trim().equals("")) {
+                    txtLogs.setText(rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3)
+                            + "\r\n" + rs.getString(4) + "\r\n" + rs.getString(5) + "\r\n" + rs.getString(6)
+                            + "\r\n" + rs.getString(7
+                    ));
+                }else{
+                    txtLogs.append("\r\n--------------\r\n" + rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n"
+                            + rs.getString(3) + "\r\n" + rs.getString(4) + "\r\n" + rs.getString(5)
+                            + "\r\n" + rs.getString(6) + "\r\n" + rs.getString(7));
+                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     static void editLog(){
         int logid = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter ID of the log you want to edit", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
         if (logid < 0){
@@ -180,7 +224,7 @@ public class LogsManager extends javax.swing.JFrame {
             stmt = connection.createStatement();
 
             ResultSet rs=stmt.executeQuery("select * from logs where id = " + logid);
-            if (rs == null){
+            if (!rs.next()){
                 JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
@@ -222,6 +266,34 @@ public class LogsManager extends javax.swing.JFrame {
         }
     }
 
+    static void deleteLog(){
+        int logid = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter ID of the log you want to delete", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
+        if (logid < 0){
+            JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        //get info from the log, show it then allow editing
+        Statement stmt= null;
+        try {
+            stmt = connection.createStatement();
+
+            ResultSet rs=stmt.executeQuery("select * from logs where id = " + logid);
+            if (!rs.next()){
+                JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            //while(rs.next()) {
+            stmt = (Statement) connection.createStatement();
+            String query1 = "delete from logs where id = " + logid;
+            stmt.executeUpdate(query1);
+            //update changes here
+            //}
+            JOptionPane.showMessageDialog(null, "Successfully deleted log with id: " + logid, MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     static void createNewLog(){
         String author = (JOptionPane.showInputDialog(null, "Enter log author", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
         String body = (JOptionPane.showInputDialog(null, "Enter log body", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
@@ -237,7 +309,24 @@ public class LogsManager extends javax.swing.JFrame {
             String query1 = "INSERT INTO logs (author, body)" + "VALUES ('" + author + "', '" + body + "')";
             Statement stmt = (Statement) connection.createStatement();
             stmt.executeUpdate(query1);
+            String query3 = "select * from logs where author = '" + author + "' and body = '" + body + "'";
+
+            Statement stmt3 = (Statement) connection.createStatement();
+            ResultSet rs=stmt3.executeQuery(query3);
+            if (!rs.next()){
+                JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            int logid = rs.getInt(1);
             //also update changes here
+            String created_at = String.valueOf(LocalDateTime.now());
+            String last_edited = String.valueOf(LocalDateTime.now());
+            String type = "Creation";
+            String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, body)"
+                    + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + author + "', '"
+                    + body + "')";
+            Statement stmt2 = (Statement) connection.createStatement();
+            stmt2.executeUpdate(query2);
             JOptionPane.showMessageDialog(null, "Inserted New Log Into Database Successfully!");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -273,7 +362,7 @@ public class LogsManager extends javax.swing.JFrame {
             System.out.println("Maybe DB not exist, creating db, then trying to connect again...");
             try {
                 String sqlURL = "jdbc:mysql://localhost:3306/?user=" + user + "&password=" + pass + "&characterEncoding=latin1";
-                //använder detta om man har ett % tecken i sitt db lösenord
+                //använder detta om man har ett % eller annat regex tecken i sitt db lösenord
                 connection = DriverManager.getConnection(sqlURL.replaceAll("%(?![0-9a-fA-F]{2})", "%25"));
 
                 Statement s=connection.createStatement();
@@ -288,7 +377,10 @@ public class LogsManager extends javax.swing.JFrame {
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "LOGID int unsigned NOT NULL,"
                         + "AUTHOR varchar(255) DEFAULT NULL,"
-                        + "BODY varchar(255) DEFAULT NULL)";
+                        + "BODY varchar(255) DEFAULT NULL,"
+                        + "CREATED_AT varchar(255) DEFAULT NULL,"
+                        + "LAST_EDITED varchar(255) DEFAULT NULL,"
+                        + "TYPE varchar(255) DEFAULT NULL)";
                 s = connection.createStatement();
                 s.executeUpdate(create_logs_table);
                 s = connection.createStatement();
