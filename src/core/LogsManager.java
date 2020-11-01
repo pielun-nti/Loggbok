@@ -30,6 +30,7 @@ public class LogsManager extends javax.swing.JFrame {
     static JMenu editMenu;
     static JMenu settingsMenu;
     static JMenu aboutMenu;
+    static JScrollPane scroll;
     static JMenuItem menuitemNewLog;
     static JMenuItem menuItemGetLogs;
     static JMenuItem menuItemEditLog;
@@ -41,9 +42,8 @@ public class LogsManager extends javax.swing.JFrame {
     static JMenuItem menuItemExit;
     static JTextArea txtLogs;
     static JMenuItem menuItemChangeFontSize;
-    private JPanel mainPanel;
+    static JMenuItem menuItemAbout;
     private static String MessageBoxTitle = "LogsManager GUI";
-    private static String openedFile = null;
     private static Font mainFont;
     static int fontSize = 18;
 
@@ -51,132 +51,123 @@ public class LogsManager extends javax.swing.JFrame {
         //todo:
         /**
          * Lägg till följande:
-         * keystrokes för menyn om tid över
-         * delete log by id
-         * historik för ändringar av logs (skapa ett nytt table i databasen som heter changes eller history)
-         * remove log history
-         * remove all logs
-         * fixa så man inte kan göra log duplicates
-         * gör så att man kan spara logs/ändringshistorik i en fil via savefiledialog om jag vill
+         * keystrokes för menyn om tid över (gjort)
+         * delete log by id (gjort)
+         * historik för ändringar av logs (skapa ett nytt table i databasen som heter changes eller history) (gjort)
+         * remove log history (gjort)
+         * remove all logs (gjort)
+         * fixa så man inte kan göra log duplicates (gjort)
+         * gör så att man kan spara logs/ändringshistorik i en fil via savefiledialog om jag vill (gjort)
          * gör db dump i slutet (egentligen behövs ej för om db inte existerar så skapar programmet en)
          */
     }
-    private static void confirmExit() {
-        //int dialogResult = JOptionPane.showConfirmDialog (null, "ARE YOU SURE YOU WANT TO EXIT THIS APPLICATION? ", MessageBoxTitle, JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
-        //if(dialogResult == JOptionPane.YES_OPTION){
-            frame.dispose();
-        //}
-    }
-    public static void main(String[]args){
-        if (!initDB()){
-            JOptionPane.showMessageDialog(null, "Init DB Error!", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-        frame = new JFrame("LogsManager");
-        BufferedImage image = null;
-        /*try {
-            image = ImageIO.read(
-                    LogsManager.class.getResource("../img/logsicon.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        frame.setIconImage(image);*/
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                confirmExit();
-            }
-        });
-        Dimension res = new Dimension(1200, 800);
-        frame.setPreferredSize(res);
-        frame.setSize(res);
-        txtLogs = new JTextArea();
-        JScrollPane scroll = new JScrollPane (txtLogs,
-                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-        txtLogs.setEditable(true);
-        mainFont = new Font("Verdana", Font.BOLD, fontSize);
-        txtLogs.setFont(mainFont);
+    static void setFonts(){
         frame.setFont(mainFont);
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
-        frame.pack();
+        txtLogs.setFont(mainFont);
+        menuBar.setFont(mainFont);
+        fileMenu.setFont(mainFont);
+        editMenu.setFont(mainFont);
+        aboutMenu.setFont(mainFont);
+        menuitemNewLog.setFont(mainFont);
+        menuItemEditLog.setFont(mainFont);
+        menuItemDeleteLog.setFont(mainFont);
+        menuItemGetLogs.setFont(mainFont);
+        menuItemShowLogHistory.setFont(mainFont);
+        menuItemDeleteAllLogs.setFont(mainFont);
+        menuItemDeleteLogHistory.setFont(mainFont);
+        menuItemSaveAs.setFont(mainFont);
+        menuItemExit.setFont(mainFont);
+        menuItemChangeFontSize.setFont(mainFont);
+        menuItemAbout.setFont(mainFont);
+    }
+
+    static void initKeystrokes(){
+        menuItemGetLogs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemShowLogHistory.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
+        menuitemNewLog.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
+    }
+
+    static void initComponents(){
+        frame = new JFrame("LogsManager");
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
         fileMenu.setFont(mainFont);
         editMenu = new JMenu("Edit");
         settingsMenu = new JMenu("Settings");
         aboutMenu = new JMenu("About");
-        editMenu.setFont(mainFont);
-        settingsMenu.setFont(mainFont);
-        aboutMenu.setFont(mainFont);
+        mainFont = new Font("Verdana", Font.BOLD, fontSize);
+        txtLogs = new JTextArea();
+        scroll = new JScrollPane (txtLogs,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        menuItemExit = new JMenuItem("Exit application");
+        menuItemSaveAs = new JMenuItem("Save As");
+        menuItemDeleteAllLogs = new JMenuItem("Delete All Logs");
+        menuItemDeleteLogHistory = new JMenuItem("Delete All Logs Changes History");
+        menuItemDeleteLog = new JMenuItem("Delete Log");
+        menuItemEditLog = new JMenuItem("Edit Log");
+        menuItemGetLogs = new JMenuItem("Get All Logs");
+        menuitemNewLog = new JMenuItem("Create New Log");
         menuItemChangeFontSize = new JMenuItem("Change Font Size");
         menuItemShowLogHistory = new JMenuItem("Get Logs Changes History");
-        menuItemShowLogHistory.setFont(mainFont);
+        menuItemAbout = new JMenuItem("About");
+
+    }
+
+    static void addListeners(){
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                frame.dispose();
+            }
+        });
         menuItemShowLogHistory.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 getLogHistory();
             }
         });
-        menuItemSaveAs = new JMenuItem("Save As");
-        menuItemSaveAs.setFont(mainFont);
         menuItemSaveAs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 saveFileDialog();
             }
         });
-        menuItemDeleteAllLogs = new JMenuItem("Delete All Logs");
-        menuItemDeleteAllLogs.setFont(mainFont);
         menuItemDeleteAllLogs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 deleteAllLogs();
             }
         });
-        menuItemDeleteLogHistory = new JMenuItem("Delete All Logs Changes History");
-        menuItemDeleteLogHistory.setFont(mainFont);
         menuItemDeleteLogHistory.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 deleteAllLogHistory();
             }
         });
-        menuItemDeleteLog = new JMenuItem("Delete Log");
-        menuItemDeleteLog.setFont(mainFont);
         menuItemDeleteLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 deleteLog();
             }
         });
-        menuItemEditLog = new JMenuItem("Edit Log");
-        menuItemEditLog.setFont(mainFont);
         menuItemEditLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 editLog();
             }
         });
-        menuItemGetLogs = new JMenuItem("Get All Logs");
-        menuItemGetLogs.setFont(mainFont);
         menuItemGetLogs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 getAllLogs();
             }
         });
-        menuItemGetLogs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_MASK));
-        menuItemShowLogHistory.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_MASK));
-        menuitemNewLog = new JMenuItem("Create New Log");
-        menuitemNewLog.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_MASK));
         menuitemNewLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 createNewLog();
             }
         });
-        menuItemChangeFontSize.setFont(mainFont);
         menuItemChangeFontSize.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -186,15 +177,22 @@ public class LogsManager extends javax.swing.JFrame {
                 frame.setFont(mainFont);
             }
         });
-        menuItemExit = new JMenuItem("Exit application");
+        menuItemAbout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JOptionPane.showMessageDialog(null, "Made by Pierre Lundström", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
         menuItemExit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                confirmExit();
+                frame.dispose();
+
             }
         });
-        menuitemNewLog.setFont(mainFont);
-        menuItemExit.setFont(mainFont);
+    }
+
+    static void addComponents(){
         fileMenu.add(menuitemNewLog);
         fileMenu.add(menuItemEditLog);
         fileMenu.add(menuItemDeleteLog);
@@ -205,12 +203,34 @@ public class LogsManager extends javax.swing.JFrame {
         fileMenu.add(menuItemSaveAs);
         fileMenu.add(menuItemExit);
         editMenu.add(menuItemChangeFontSize);
+        aboutMenu.add(menuItemAbout);
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         //menuBar.add(settingsMenu);
         menuBar.add(aboutMenu);
         frame.setJMenuBar(menuBar);
         frame.add(scroll);
+    }
+
+
+
+    public static void main(String[]args){
+        if (!initDB()){
+            JOptionPane.showMessageDialog(null, "Init DB Error!", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        initComponents();
+        setFonts();
+        initKeystrokes();
+        addListeners();
+        addComponents();
+        Dimension res = new Dimension(1200, 800);
+        frame.setPreferredSize(res);
+        frame.setSize(res);
+        txtLogs.setEditable(true);
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
+        frame.pack();
         frame.setVisible(true);
     }
 
