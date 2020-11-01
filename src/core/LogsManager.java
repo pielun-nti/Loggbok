@@ -48,6 +48,7 @@ public class LogsManager extends javax.swing.JFrame {
          * historik för ändringar av logs (skapa ett nytt table i databasen som heter changes eller history)
          * remove log history
          * remove all logs
+         * fixa så man inte kan göra log duplicates
          * gör db dump i slutet
          */
     }
@@ -97,7 +98,7 @@ public class LogsManager extends javax.swing.JFrame {
         settingsMenu.setFont(mainFont);
         aboutMenu.setFont(mainFont);
         menuItemChangeFontSize = new JMenuItem("Change Font Size");
-        menuItemShowLogHistory = new JMenuItem("Get Log History");
+        menuItemShowLogHistory = new JMenuItem("Get Logs Changes History");
         menuItemShowLogHistory.setFont(mainFont);
         menuItemShowLogHistory.addActionListener(new ActionListener() {
             @Override
@@ -180,9 +181,9 @@ public class LogsManager extends javax.swing.JFrame {
             txtLogs.setText("");
             while(rs.next())
                 if (txtLogs.getText().trim().equals("")) {
-                    txtLogs.setText(rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
+                    txtLogs.setText("ID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nBody: " + rs.getString(3));
                 }else{
-                    txtLogs.append("\r\n--------------\r\n" + rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3));
+                    txtLogs.append("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nBody: " + rs.getString(3));
                 }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -198,14 +199,15 @@ public class LogsManager extends javax.swing.JFrame {
             txtLogs.setText("");
             while(rs.next())
                 if (txtLogs.getText().trim().equals("")) {
-                    txtLogs.setText(rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n" + rs.getString(3)
-                            + "\r\n" + rs.getString(4) + "\r\n" + rs.getString(5) + "\r\n" + rs.getString(6)
-                            + "\r\n" + rs.getString(7
+                    txtLogs.setText("ID: " + rs.getString(1) + "\r\nLog ID: " + rs.getString(2) + "\r\nAuthor: " + rs.getString(3)
+                            + "\r\nBody: " + rs.getString(4) + "\r\nCreated At: " + rs.getString(5) + "\r\nLast Edited: " + rs.getString(6)
+                            + "\r\nType Of Change: " + rs.getString(7
                     ));
                 }else{
-                    txtLogs.append("\r\n--------------\r\n" + rs.getString(1) + "\r\n" + rs.getString(2) + "\r\n"
-                            + rs.getString(3) + "\r\n" + rs.getString(4) + "\r\n" + rs.getString(5)
-                            + "\r\n" + rs.getString(6) + "\r\n" + rs.getString(7));
+                    txtLogs.append("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nLog ID:" + rs.getString(2)
+                            + "\r\nAuthor: "
+                            + rs.getString(3) + "\r\nBody: " + rs.getString(4) + "\r\nCreated At: " + rs.getString(5)
+                            + "\r\nLast Edited: " + rs.getString(6) + "\r\nType Of Change: " + rs.getString(7));
                 }
         } catch (SQLException e) {
             e.printStackTrace();
