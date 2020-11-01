@@ -187,6 +187,8 @@ public class LogsManager extends javax.swing.JFrame {
         fileMenu.add(menuItemDeleteLog);
         fileMenu.add(menuItemGetLogs);
         fileMenu.add(menuItemShowLogHistory);
+        fileMenu.add(menuItemDeleteAllLogs);
+        fileMenu.add(menuItemDeleteLogHistory);
         fileMenu.add(menuItemExit);
         editMenu.add(menuItemChangeFontSize);
         menuBar.add(fileMenu);
@@ -320,6 +322,21 @@ public class LogsManager extends javax.swing.JFrame {
                     String query1 = "update logs set body='" + logbody + "' " + "where id in(" + logid + ")";
                     stmt.executeUpdate(query1);
                     //also updates changes here
+                    String query3 = "select * from changes where logid = " + logid;
+
+                    Statement stmt3 = (Statement) connection.createStatement();
+                    ResultSet rs2=stmt3.executeQuery(query3);
+                    String created_at = null;
+                    if (rs2.next()) {
+                        created_at = rs2.getString(5);
+                    }
+                    String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+                    String type = "Editing";
+                    String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, body)"
+                            + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + logauthor + "', '"
+                            + logbody + "')";
+                    Statement stmt2 = (Statement) connection.createStatement();
+                    stmt2.executeUpdate(query2);
                 }
             //}
             JOptionPane.showMessageDialog(null, "Successfully updated author and body for log id: " + logid, MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
