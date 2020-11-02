@@ -25,6 +25,7 @@ import java.util.Calendar;
 public class LogsManager extends javax.swing.JFrame {
     static Connection connection;
     static JFrame frame;
+    static String username;
     static JMenuBar menuBar;
     static JMenu fileMenu;
     static JMenu editMenu;
@@ -47,7 +48,8 @@ public class LogsManager extends javax.swing.JFrame {
     private static Font mainFont;
     static int fontSize = 18;
 
-    public LogsManager(){
+    public LogsManager(String username){
+        this.username = username;
         //todo:
         /**
          * Lägg till följande:
@@ -59,6 +61,8 @@ public class LogsManager extends javax.swing.JFrame {
          * fixa så man inte kan göra log duplicates (gjort)
          * gör så att man kan spara logs/ändringshistorik i en fil via savefiledialog om jag vill (gjort)
          * gör db dump i slutet (egentligen behövs ej för om db inte existerar så skapar programmet en)
+         * gör så att man kan logga in eller registrera användare.
+         * gör så att man kan välja att vara anonym och isåfall blir authorn unknown
          */
     }
 
@@ -548,6 +552,10 @@ public class LogsManager extends javax.swing.JFrame {
                 int result =s.executeUpdate("CREATE DATABASE " + Env.dbName);
                 connection.close();
                 connection = DriverManager.getConnection(conURL, user, pass);
+                String create_users_table ="CREATE TABLE users ("
+                        + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+                        + "USERNAME varchar(255) DEFAULT NULL,"
+                        + "PASSWORD varchar(255) DEFAULT NULL)";
                 String create_logs_table="CREATE TABLE logs ("
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "AUTHOR varchar(255) DEFAULT NULL,"
@@ -564,6 +572,8 @@ public class LogsManager extends javax.swing.JFrame {
                 s.executeUpdate(create_logs_table);
                 s = connection.createStatement();
                 s.executeUpdate(create_changes_table);
+                s = connection.createStatement();
+                s.executeUpdate(create_users_table);
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 success = false;
