@@ -50,6 +50,24 @@ public class LogsManager extends javax.swing.JFrame {
 
     public LogsManager(String username){
         this.username = username;
+        if (!initDB()){
+            JOptionPane.showMessageDialog(null, "Init DB Error!", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        initComponents();
+        setFonts();
+        initKeystrokes();
+        addListeners();
+        addComponents();
+        Dimension res = new Dimension(1200, 800);
+        frame.setPreferredSize(res);
+        frame.setSize(res);
+        txtLogs.setEditable(true);
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
+        frame.pack();
+        frame.setVisible(true);
+        JOptionPane.showMessageDialog(null, "Welcome to LogsManager, " +username);
         //todo:
         /**
          * Lägg till följande:
@@ -99,7 +117,6 @@ public class LogsManager extends javax.swing.JFrame {
         frame = new JFrame("LogsManager");
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
-        fileMenu.setFont(mainFont);
         editMenu = new JMenu("Edit");
         settingsMenu = new JMenu("Settings");
         aboutMenu = new JMenu("About");
@@ -218,27 +235,6 @@ public class LogsManager extends javax.swing.JFrame {
         frame.add(scroll);
     }
 
-
-
-    public static void main(String[]args){
-        if (!initDB()){
-            JOptionPane.showMessageDialog(null, "Init DB Error!", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-        initComponents();
-        setFonts();
-        initKeystrokes();
-        addListeners();
-        addComponents();
-        Dimension res = new Dimension(1200, 800);
-        frame.setPreferredSize(res);
-        frame.setSize(res);
-        txtLogs.setEditable(true);
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
-        frame.pack();
-        frame.setVisible(true);
-    }
 
     static void getAllLogs(){
         Statement stmt= null;
@@ -438,7 +434,7 @@ public class LogsManager extends javax.swing.JFrame {
     }
 
     static void createNewLog(){
-        String author = (JOptionPane.showInputDialog(null, "Enter log author", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
+        String author = username;
         String body = (JOptionPane.showInputDialog(null, "Enter log body", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
         if (author == null || body == null){
             JOptionPane.showMessageDialog(null, "Author or body cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);

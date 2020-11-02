@@ -19,7 +19,7 @@ public class Register extends javax.swing.JFrame {
     private static Font mainFont;
     static int fontSize = 18;
 
-    public static void main(String[]args){
+    public Register(){
         if (!initDB()){
             JOptionPane.showMessageDialog(null, "Init DB Error!", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
             return;
@@ -40,9 +40,10 @@ public class Register extends javax.swing.JFrame {
 
     static void setFonts(){
         frame.setFont(mainFont);
+        helpMenu.setFont(mainFont);
         menuBar.setFont(mainFont);
         menuItemLogin.setFont(mainFont);
-        menuItemLogin.setFont(mainFont);
+        menuItemRegister.setFont(mainFont);
         menuItemAnonymous.setFont(mainFont);
     }
 
@@ -50,7 +51,6 @@ public class Register extends javax.swing.JFrame {
         frame = new JFrame("Register");
         menuBar = new JMenuBar();
         helpMenu = new JMenu("Register");
-        helpMenu.setFont(mainFont);
         mainFont = new Font("Verdana", Font.BOLD, fontSize);
         menuItemLogin = new JMenuItem("Login");
         menuItemRegister = new JMenuItem("Register");
@@ -88,23 +88,28 @@ public class Register extends javax.swing.JFrame {
 
     static void Login(){
         Login login = new Login();
-        login.setVisible(true);
+        frame.dispose();
     }
 
     static void Register(){
         String username = JOptionPane.showInputDialog(null, "Enter username", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
         String password = JOptionPane.showInputDialog(null, "Enter password", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
-        String query = "INSERT INTO users (username, password) VALUES (" + username + ", " + password + ")";
+        if (username == null || password == null){
+            JOptionPane.showMessageDialog(null, "Username or password cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (username.trim().equals("") || password.trim().equals("")){
+            JOptionPane.showMessageDialog(null, "Username and password must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String query = "INSERT INTO users (username, password) VALUES ('" + username + "', '" + password + "')";
         Statement stmt = null;
         try {
             stmt = (Statement) connection.createStatement();
-            ResultSet rs = stmt.executeUpdate(query);
-            if (!rs.next()){
-                JOptionPane.showMessageDialog(null, "Invalid username or password. Access denied.", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
+            stmt.executeUpdate(query);
             LogsManager logsManager = new LogsManager(username);
             logsManager.setVisible(true);
+            //JOptionPane.showMessageDialog(null, "Successfully registered.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -112,7 +117,7 @@ public class Register extends javax.swing.JFrame {
 
     static void loginAnonymous(){
         LogsManager logsManager = new LogsManager("Unknown");
-        logsManager.setVisible(true);
+        frame.dispose();
     }
 
     public static boolean initDB(){

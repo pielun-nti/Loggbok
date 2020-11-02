@@ -19,7 +19,7 @@ public class Login extends javax.swing.JFrame {
     private static Font mainFont;
     static int fontSize = 18;
 
-    public static void main(String[]args){
+    public Login(){
         if (!initDB()){
             JOptionPane.showMessageDialog(null, "Init DB Error!", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
             return;
@@ -41,8 +41,9 @@ public class Login extends javax.swing.JFrame {
     static void setFonts(){
         frame.setFont(mainFont);
         menuBar.setFont(mainFont);
+        helpMenu.setFont(mainFont);
         menuItemLogin.setFont(mainFont);
-        menuItemLogin.setFont(mainFont);
+        menuItemRegister.setFont(mainFont);
         menuItemAnonymous.setFont(mainFont);
     }
 
@@ -50,7 +51,6 @@ public class Login extends javax.swing.JFrame {
         frame = new JFrame("Login");
         menuBar = new JMenuBar();
         helpMenu = new JMenu("Login");
-        helpMenu.setFont(mainFont);
         mainFont = new Font("Verdana", Font.BOLD, fontSize);
         menuItemLogin = new JMenuItem("Login");
         menuItemRegister = new JMenuItem("Register");
@@ -89,6 +89,14 @@ public class Login extends javax.swing.JFrame {
     static void Login(){
         String username = JOptionPane.showInputDialog(null, "Enter username", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
         String password = JOptionPane.showInputDialog(null, "Enter password", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
+        if (username == null || password == null){
+            JOptionPane.showMessageDialog(null, "Username or password cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (username.trim().equals("") || password.trim().equals("")){
+            JOptionPane.showMessageDialog(null, "Username and password must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         String query = "SELECT * from users where username = '" + username + "' and password = '" + password + "'";
         Statement stmt = null;
         try {
@@ -107,12 +115,12 @@ public class Login extends javax.swing.JFrame {
 
     static void Register(){
         Register register = new Register();
-        register.setVisible(true);
+        frame.dispose();
     }
 
     static void loginAnonymous(){
         LogsManager logsManager = new LogsManager("Unknown");
-        logsManager.setVisible(true);
+        frame.dispose();
     }
 
     public static boolean initDB(){
