@@ -4,7 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.*;
+import java.util.Arrays;
 
 public class Login extends javax.swing.JFrame {
 
@@ -12,9 +14,14 @@ public class Login extends javax.swing.JFrame {
     static JFrame frame;
     static JMenuBar menuBar;
     static JMenu helpMenu;
-    static JMenuItem menuItemLogin;
     static JMenuItem menuItemRegister;
     static JMenuItem menuItemAnonymous;
+    static JTextField txtUsername;
+    static JPasswordField txtPassword;
+    static JLabel labelUsername;
+    static JLabel labelPassword;
+    static JButton btnLogin;
+    static JPanel mainPanel;
     private static String MessageBoxTitle = "Login GUI";
     private static Font mainFont;
     static int fontSize = 18;
@@ -26,47 +33,98 @@ public class Login extends javax.swing.JFrame {
         }
         initComponents();
         setFonts();
+        setLocation();
+        setToolTips();
         //initKeystrokes();
         addListeners();
         addComponents();
         Dimension res = new Dimension(1200, 800);
         frame.setPreferredSize(res);
         frame.setSize(res);
+        frame.setContentPane(mainPanel);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.pack();
         frame.setVisible(true);
+        txtUsername.requestFocus();
     }
 
     static void setFonts(){
         frame.setFont(mainFont);
         menuBar.setFont(mainFont);
         helpMenu.setFont(mainFont);
-        menuItemLogin.setFont(mainFont);
         menuItemRegister.setFont(mainFont);
         menuItemAnonymous.setFont(mainFont);
+        txtUsername.setFont(mainFont);
+        txtPassword.setFont(mainFont);
+        labelUsername.setFont(mainFont);
+        labelPassword.setFont(mainFont);
+        btnLogin.setFont(mainFont);
+    }
+
+    static void setLocation(){
+        txtUsername.setLocation(130, 10);
+        txtUsername.setSize(300, 30);
+        txtPassword.setLocation(130, 40);
+        txtPassword.setSize(300, 30);
+        labelUsername.setLocation(10, 10);
+        labelUsername.setSize(200, 30);
+        labelPassword.setLocation(10, 40);
+        labelPassword.setSize(200, 30);
+        btnLogin.setLocation(10, 70);
+        btnLogin.setSize(200, 30);
+    }
+
+    static void setToolTips(){
+        txtUsername.setToolTipText("Enter username here");
+        txtPassword.setToolTipText("Enter password here");
     }
 
     static void initComponents(){
         frame = new JFrame("Login");
+        mainPanel = new JPanel();
         menuBar = new JMenuBar();
-        helpMenu = new JMenu("Login");
+        helpMenu = new JMenu("Help");
         mainFont = new Font("Verdana", Font.BOLD, fontSize);
-        menuItemLogin = new JMenuItem("Login");
         menuItemRegister = new JMenuItem("Register");
         menuItemAnonymous = new JMenuItem("Login as Anonymous");
+        txtPassword = new JPasswordField();
+        txtUsername = new JTextField();
+        labelUsername = new JLabel("Username: ");
+        labelPassword = new JLabel("Password: ");
+        btnLogin = new JButton("Login");
     }
 
-    static void addComponents(){
-        helpMenu.add(menuItemLogin);
+    static void addComponents() {
         helpMenu.add(menuItemRegister);
         helpMenu.add(menuItemAnonymous);
         menuBar.add(helpMenu);
         frame.setJMenuBar(menuBar);
+        mainPanel.setLayout(null);
+        txtPassword.setEchoChar('*');
+        mainPanel.add(txtUsername);
+        mainPanel.add(txtPassword);
+        mainPanel.add(labelUsername);
+        mainPanel.add(labelPassword);
+        mainPanel.add(btnLogin);
     }
 
     static void addListeners(){
-        menuItemLogin.addActionListener(new ActionListener() {
+        txtUsername.addKeyListener(new java.awt.event.KeyAdapter(){
+            public void keyPressed(java.awt.event.KeyEvent evt){
+                if (evt.getKeyChar() == KeyEvent.VK_ENTER){
+                    txtPassword.requestFocus();
+                }
+            }
+        });
+        txtPassword.addKeyListener(new java.awt.event.KeyAdapter(){
+            public void keyPressed(java.awt.event.KeyEvent evt){
+                if (evt.getKeyChar() == KeyEvent.VK_ENTER){
+                    btnLogin.doClick();
+                }
+            }
+        });
+        btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 Login();
@@ -87,8 +145,8 @@ public class Login extends javax.swing.JFrame {
     }
 
     static void Login(){
-        String username = JOptionPane.showInputDialog(null, "Enter username", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
-        String password = JOptionPane.showInputDialog(null, "Enter password", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
+        String username = txtUsername.getText().trim();
+        String password = txtPassword.getText().trim();
         if (username == null || password == null){
             JOptionPane.showMessageDialog(null, "Username or password cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
             return;
@@ -104,9 +162,13 @@ public class Login extends javax.swing.JFrame {
         ResultSet rs = stmt.executeQuery(query);
         if (!rs.next()){
             JOptionPane.showMessageDialog(null, "Invalid username or password. Access denied.", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            txtUsername.setText("");
+            txtPassword.setText("");
+            txtUsername.requestFocus();
             return;
         }
         LogsManager logsManager = new LogsManager(username);
+        frame.dispose();
         } catch (SQLException e) {
             e.printStackTrace();
         }

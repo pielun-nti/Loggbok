@@ -67,7 +67,7 @@ public class LogsManager extends javax.swing.JFrame {
         frame.setLocationRelativeTo(null);
         frame.pack();
         frame.setVisible(true);
-        JOptionPane.showMessageDialog(null, "Welcome to LogsManager, " +username);
+        //JOptionPane.showMessageDialog(null, "Welcome to LogsManager, " +username);
         //todo:
         /**
          * Lägg till följande:
@@ -81,6 +81,7 @@ public class LogsManager extends javax.swing.JFrame {
          * gör db dump i slutet (egentligen behövs ej för om db inte existerar så skapar programmet en)
          * gör så att man kan logga in eller registrera användare.
          * gör så att man kan välja att vara anonym och isåfall blir authorn unknown
+         * lägg till så att man kan filtrera loggar sen om jag vill
          */
     }
 
@@ -114,7 +115,7 @@ public class LogsManager extends javax.swing.JFrame {
     }
 
     static void initComponents(){
-        frame = new JFrame("LogsManager");
+        frame = new JFrame("LogsManager - logged in as: " + username);
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
         editMenu = new JMenu("Edit");
@@ -328,22 +329,6 @@ public class LogsManager extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            //while(rs.next()) {
-                String logauthor = (String) JOptionPane.showInputDialog(null, "Edit author for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(2));
-                if (logauthor == null){
-                    JOptionPane.showMessageDialog(null, "Author cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                if (logauthor.trim().equals("")){
-                    JOptionPane.showMessageDialog(null, "Author must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                if (!logauthor.trim().equals(rs.getString(1))){
-                    stmt = (Statement) connection.createStatement();
-                    String query1 = "update logs set author='" + logauthor + "' " + "where id in(" + logid + ")";
-                    stmt.executeUpdate(query1);
-                    //also update changes here
-                }
                 String logbody = (String) JOptionPane.showInputDialog(null, "Edit body for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(3));
                 if (logbody == null){
                     JOptionPane.showMessageDialog(null, "Body cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
@@ -353,7 +338,7 @@ public class LogsManager extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Body must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-            String query4 = "SELECT * from logs where author = '" + logauthor + "' and body = '" + logbody + "'";
+            String query4 = "SELECT * from logs where author = '" + username + "' and body = '" + logbody + "'";
             Statement stmt4 = (Statement) connection.createStatement();
             ResultSet rs4 = stmt4.executeQuery(query4);
             if (rs4.next()){
@@ -376,7 +361,7 @@ public class LogsManager extends javax.swing.JFrame {
                     String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
                     String type = "Editing";
                     String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, body)"
-                            + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + logauthor + "', '"
+                            + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + username + "', '"
                             + logbody + "')";
                     Statement stmt2 = (Statement) connection.createStatement();
                     stmt2.executeUpdate(query2);
