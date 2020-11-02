@@ -40,6 +40,7 @@ public class LogsManager extends javax.swing.JFrame {
     static JMenuItem menuItemDeleteAllLogs;
     static JMenuItem menuItemDeleteLogHistory;
     static JMenuItem menuItemSaveAs;
+    static JMenuItem menuItemLogout;
     static JMenuItem menuItemExit;
     static JTextArea txtLogs;
     static JMenuItem menuItemChangeFontSize;
@@ -103,6 +104,7 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemExit.setFont(mainFont);
         menuItemChangeFontSize.setFont(mainFont);
         menuItemAbout.setFont(mainFont);
+        menuItemLogout.setFont(mainFont);
     }
 
     static void initKeystrokes(){
@@ -112,6 +114,7 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemEditLog.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_MASK));
         menuItemDeleteLog.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.CTRL_MASK));
         menuItemSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemLogout.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
     }
 
     static void initComponents(){
@@ -136,6 +139,7 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemChangeFontSize = new JMenuItem("Change Font Size");
         menuItemShowLogHistory = new JMenuItem("Get Logs Changes History");
         menuItemAbout = new JMenuItem("About");
+        menuItemLogout = new JMenuItem("Logout");
     }
 
     static void addListeners(){
@@ -214,6 +218,17 @@ public class LogsManager extends javax.swing.JFrame {
 
             }
         });
+        menuItemLogout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                Logout();
+            }
+        });
+    }
+
+    static void Logout(){
+        Login login = new Login();
+        frame.dispose();
     }
 
     static void addComponents(){
@@ -225,6 +240,7 @@ public class LogsManager extends javax.swing.JFrame {
         fileMenu.add(menuItemDeleteAllLogs);
         fileMenu.add(menuItemDeleteLogHistory);
         fileMenu.add(menuItemSaveAs);
+        fileMenu.add(menuItemLogout);
         fileMenu.add(menuItemExit);
         editMenu.add(menuItemChangeFontSize);
         aboutMenu.add(menuItemAbout);
@@ -246,9 +262,9 @@ public class LogsManager extends javax.swing.JFrame {
             txtLogs.setText("");
             while(rs.next())
                 if (txtLogs.getText().trim().equals("")) {
-                    txtLogs.setText("ID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nBody: " + rs.getString(3));
+                    txtLogs.setText("ID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nEditors: " + rs.getString(4) + "\r\nBody: " + rs.getString(3));
                 }else{
-                    txtLogs.append("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nBody: " + rs.getString(3));
+                    txtLogs.append("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nEditors: " + rs.getString(4) + "\r\nBody: " + rs.getString(3));
                 }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -299,13 +315,15 @@ public class LogsManager extends javax.swing.JFrame {
             while(rs.next())
                 if (txtLogs.getText().trim().equals("")) {
                     txtLogs.setText("ID: " + rs.getString(1) + "\r\nLog ID: " + rs.getString(2) + "\r\nAuthor: " + rs.getString(3)
+                            + "\r\nEditor: " + rs.getString(8)
                             + "\r\nBody: " + rs.getString(4) + "\r\nCreated At: " + rs.getString(5) + "\r\nLast Edited: " + rs.getString(6)
                             + "\r\nType Of Change: " + rs.getString(7
                     ));
                 }else{
                     txtLogs.append("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nLog ID:" + rs.getString(2)
                             + "\r\nAuthor: "
-                            + rs.getString(3) + "\r\nBody: " + rs.getString(4) + "\r\nCreated At: " + rs.getString(5)
+                            + rs.getString(3)
+                            + "\r\nEditor: " + rs.getString(8) + "\r\nBody: " + rs.getString(4) + "\r\nCreated At: " + rs.getString(5)
                             + "\r\nLast Edited: " + rs.getString(6) + "\r\nType Of Change: " + rs.getString(7));
                 }
         } catch (SQLException e) {
@@ -329,6 +347,7 @@ public class LogsManager extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
+
                 String logbody = (String) JOptionPane.showInputDialog(null, "Edit body for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(3));
                 if (logbody == null){
                     JOptionPane.showMessageDialog(null, "Body cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
@@ -338,20 +357,34 @@ public class LogsManager extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Body must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-            String query4 = "SELECT * from logs where author = '" + username + "' and body = '" + logbody + "'";
+            String query4 = "SELECT * from logs where author = '" + rs.getString(2) + "' and body = '" + logbody + "'";
             Statement stmt4 = (Statement) connection.createStatement();
             ResultSet rs4 = stmt4.executeQuery(query4);
             if (rs4.next()){
                 JOptionPane.showMessageDialog(null, "A log with exactly identical author and body already exists. Please change.", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
+
+            String editors = rs.getString(4);
+            if (editors != null) {
+                if (!editors.contains(username)) {
+                    if (editors.trim().equals("")){
+                     editors = username;
+                    }else {
+                        editors += ", " + username;
+                    }
+                }
+            }
+            stmt = (Statement) connection.createStatement();
+            String query6 = "update logs set editors='" + editors + "' " + "where id in(" + logid + ")";
+            stmt.executeUpdate(query6);
+            //also updates changes here
+            String query3 = "select * from changes where logid = " + logid;
+
                 if (!logbody.trim().equals(rs.getString(2))){
                     stmt = (Statement) connection.createStatement();
                     String query1 = "update logs set body='" + logbody + "' " + "where id in(" + logid + ")";
                     stmt.executeUpdate(query1);
-                    //also updates changes here
-                    String query3 = "select * from changes where logid = " + logid;
-
                     Statement stmt3 = (Statement) connection.createStatement();
                     ResultSet rs2=stmt3.executeQuery(query3);
                     String created_at = null;
@@ -360,8 +393,10 @@ public class LogsManager extends javax.swing.JFrame {
                     }
                     String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
                     String type = "Editing";
-                    String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, body)"
-                            + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + username + "', '"
+                    String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
+                            + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '"
+                            + rs.getString(2) + "', '"
+                            + username + "', '"
                             + logbody + "')";
                     Statement stmt2 = (Statement) connection.createStatement();
                     stmt2.executeUpdate(query2);
@@ -402,9 +437,9 @@ public class LogsManager extends javax.swing.JFrame {
             }
             String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             String type = "Deletion";
-            String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, body)"
-                    + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + rs.getString(2) + "', '"
-                    + rs.getString(3) + "')";
+            String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
+                    + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + rs.getString(2)
+                     + "', '" + username + "', '" + rs.getString(3) + "')";
             Statement stmt2 = (Statement) connection.createStatement();
             stmt2.executeUpdate(query2);
             stmt = (Statement) connection.createStatement();
@@ -438,7 +473,7 @@ public class LogsManager extends javax.swing.JFrame {
                 return;
             }
 
-            String query1 = "INSERT INTO logs (author, body)" + "VALUES ('" + author + "', '" + body + "')";
+            String query1 = "INSERT INTO logs (author, editors, body)" + "VALUES ('" + author + "', '" + "" + "', '" + body + "')";
             Statement stmt = (Statement) connection.createStatement();
             stmt.executeUpdate(query1);
             String query3 = "select * from logs where author = '" + author + "' and body = '" + body + "'";
@@ -454,8 +489,9 @@ public class LogsManager extends javax.swing.JFrame {
             String created_at = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             String type = "Creation";
-            String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, body)"
-                    + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + author + "', '"
+            String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
+                    + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '"
+                    + author + "', '" + username + "', '"
                     + body + "')";
             Statement stmt2 = (Statement) connection.createStatement();
             stmt2.executeUpdate(query2);
@@ -540,7 +576,8 @@ public class LogsManager extends javax.swing.JFrame {
                 String create_logs_table="CREATE TABLE logs ("
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "AUTHOR varchar(255) DEFAULT NULL,"
-                        + "BODY varchar(255) DEFAULT NULL)";
+                        + "BODY varchar(255) DEFAULT NULL,"
+                        + "EDITORS varchar(255) DEFAULT NULL)";
                 String create_changes_table="CREATE TABLE changes ("
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "LOGID int unsigned NOT NULL,"
@@ -548,7 +585,8 @@ public class LogsManager extends javax.swing.JFrame {
                         + "BODY varchar(255) DEFAULT NULL,"
                         + "CREATED_AT varchar(255) DEFAULT NULL,"
                         + "LAST_EDITED varchar(255) DEFAULT NULL,"
-                        + "TYPE varchar(255) DEFAULT NULL)";
+                        + "TYPE varchar(255) DEFAULT NULL,"
+                        + "EDITOR varchar(255) DEFAULT NULL)";
                 s = connection.createStatement();
                 s.executeUpdate(create_logs_table);
                 s = connection.createStatement();

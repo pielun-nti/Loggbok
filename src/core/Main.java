@@ -1,8 +1,8 @@
 package core;
 
 public class Main {
-    public static void main(String[]args){
-        //check in db if registered. If reg then open login, otherwise register.
+
+    public static void main(String[] args) {
         Login login = new Login();
     }
 }

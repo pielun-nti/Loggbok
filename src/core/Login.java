@@ -35,7 +35,7 @@ public class Login extends javax.swing.JFrame {
         setFonts();
         setLocation();
         setToolTips();
-        //initKeystrokes();
+        initKeystrokes();
         addListeners();
         addComponents();
         Dimension res = new Dimension(1200, 800);
@@ -47,6 +47,10 @@ public class Login extends javax.swing.JFrame {
         frame.pack();
         frame.setVisible(true);
         txtUsername.requestFocus();
+    }
+
+    static void initKeystrokes(){
+        menuItemRegister.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
     }
 
     static void setFonts(){
@@ -226,7 +230,8 @@ public class Login extends javax.swing.JFrame {
                 String create_logs_table="CREATE TABLE logs ("
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "AUTHOR varchar(255) DEFAULT NULL,"
-                        + "BODY varchar(255) DEFAULT NULL)";
+                        + "BODY varchar(255) DEFAULT NULL,"
+                        + "EDITORS varchar(255) DEFAULT NULL)";
                 String create_changes_table="CREATE TABLE changes ("
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "LOGID int unsigned NOT NULL,"
@@ -234,7 +239,8 @@ public class Login extends javax.swing.JFrame {
                         + "BODY varchar(255) DEFAULT NULL,"
                         + "CREATED_AT varchar(255) DEFAULT NULL,"
                         + "LAST_EDITED varchar(255) DEFAULT NULL,"
-                        + "TYPE varchar(255) DEFAULT NULL)";
+                        + "TYPE varchar(255) DEFAULT NULL,"
+                        + "EDITOR varchar(255) DEFAULT NULL)";
                 s = connection.createStatement();
                 s.executeUpdate(create_logs_table);
                 s = connection.createStatement();

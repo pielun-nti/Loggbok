@@ -20,7 +20,7 @@ public class Register extends javax.swing.JFrame {
     static JPasswordField txtPassword;
     static JLabel labelUsername;
     static JLabel labelPassword;
-    static JButton btnLogin;
+    static JButton btnRegister;
     static JPanel mainPanel;
     private static String MessageBoxTitle = "Register GUI";
     private static Font mainFont;
@@ -35,7 +35,7 @@ public class Register extends javax.swing.JFrame {
         setFonts();
         setLocation();
         setToolTips();
-        //initKeystrokes();
+        initKeystrokes();
         addListeners();
         addComponents();
         Dimension res = new Dimension(1200, 800);
@@ -58,8 +58,12 @@ public class Register extends javax.swing.JFrame {
         labelUsername.setSize(200, 30);
         labelPassword.setLocation(10, 40);
         labelPassword.setSize(200, 30);
-        btnLogin.setLocation(10, 70);
-        btnLogin.setSize(200, 30);
+        btnRegister.setLocation(10, 70);
+        btnRegister.setSize(200, 30);
+    }
+
+    static void initKeystrokes(){
+        menuItemLogin.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
     }
 
     static void setToolTips(){
@@ -77,7 +81,7 @@ public class Register extends javax.swing.JFrame {
         txtPassword.setFont(mainFont);
         labelUsername.setFont(mainFont);
         labelPassword.setFont(mainFont);
-        btnLogin.setFont(mainFont);
+        btnRegister.setFont(mainFont);
     }
 
     static void initComponents(){
@@ -92,7 +96,7 @@ public class Register extends javax.swing.JFrame {
         txtUsername = new JTextField();
         labelUsername = new JLabel("Username: ");
         labelPassword = new JLabel("Password: ");
-        btnLogin = new JButton("Login");
+        btnRegister = new JButton("Register");
     }
 
     static void addComponents(){
@@ -106,7 +110,7 @@ public class Register extends javax.swing.JFrame {
         mainPanel.add(txtPassword);
         mainPanel.add(labelUsername);
         mainPanel.add(labelPassword);
-        mainPanel.add(btnLogin);
+        mainPanel.add(btnRegister);
     }
 
     static void addListeners(){
@@ -126,14 +130,14 @@ public class Register extends javax.swing.JFrame {
         txtPassword.addKeyListener(new java.awt.event.KeyAdapter(){
             public void keyPressed(java.awt.event.KeyEvent evt){
                 if (evt.getKeyChar() == KeyEvent.VK_ENTER){
-                    btnLogin.doClick();
+                    btnRegister.doClick();
                 }
             }
         });
-        btnLogin.addActionListener(new ActionListener() {
+        btnRegister.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                Login();
+                Register();
             }
         });
         menuItemAnonymous.addActionListener(new ActionListener() {
@@ -166,6 +170,9 @@ public class Register extends javax.swing.JFrame {
         ResultSet rs2 = stmt2.executeQuery(query2);
         if (rs2.next()){
             JOptionPane.showMessageDialog(null, "That username is already taken. Try another one..", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            txtUsername.setText("");
+            txtPassword.setText("");
+            txtUsername.requestFocus();
             return;
         }
         } catch (SQLException e) {
@@ -231,7 +238,8 @@ public class Register extends javax.swing.JFrame {
                 String create_logs_table="CREATE TABLE logs ("
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "AUTHOR varchar(255) DEFAULT NULL,"
-                        + "BODY varchar(255) DEFAULT NULL)";
+                        + "BODY varchar(255) DEFAULT NULL,"
+                        + "EDITORS varchar(255) DEFAULT NULL)";
                 String create_changes_table="CREATE TABLE changes ("
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "LOGID int unsigned NOT NULL,"
@@ -239,7 +247,8 @@ public class Register extends javax.swing.JFrame {
                         + "BODY varchar(255) DEFAULT NULL,"
                         + "CREATED_AT varchar(255) DEFAULT NULL,"
                         + "LAST_EDITED varchar(255) DEFAULT NULL,"
-                        + "TYPE varchar(255) DEFAULT NULL)";
+                        + "TYPE varchar(255) DEFAULT NULL,"
+                        + "EDITOR varchar(255) DEFAULT NULL)";
                 s = connection.createStatement();
                 s.executeUpdate(create_logs_table);
                 s = connection.createStatement();
