@@ -107,7 +107,6 @@ public class Login extends javax.swing.JFrame {
             return;
         }
         LogsManager logsManager = new LogsManager(username);
-        logsManager.setVisible(true);
         } catch (SQLException e) {
             e.printStackTrace();
         }

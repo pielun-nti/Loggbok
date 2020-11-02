@@ -102,13 +102,23 @@ public class Register extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Username and password must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
             return;
         }
+        try {
+        String query2 = "SELECT * from users where username = '" + username + "'";
+            Statement stmt2 = (Statement) connection.createStatement();
+        ResultSet rs2 = stmt2.executeQuery(query2);
+        if (rs2.next()){
+            JOptionPane.showMessageDialog(null, "That username is already taken. Try another one..", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         String query = "INSERT INTO users (username, password) VALUES ('" + username + "', '" + password + "')";
         Statement stmt = null;
         try {
             stmt = (Statement) connection.createStatement();
             stmt.executeUpdate(query);
             LogsManager logsManager = new LogsManager(username);
-            logsManager.setVisible(true);
             //JOptionPane.showMessageDialog(null, "Successfully registered.");
         } catch (SQLException e) {
             e.printStackTrace();
