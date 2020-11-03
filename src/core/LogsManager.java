@@ -26,6 +26,7 @@ public class LogsManager extends javax.swing.JFrame {
     static Connection connection;
     static JFrame frame;
     static String username;
+    static boolean admin;
     static JMenuBar menuBar;
     static JMenu fileMenu;
     static JMenu editMenu;
@@ -49,8 +50,9 @@ public class LogsManager extends javax.swing.JFrame {
     private static Font mainFont;
     static int fontSize = 18;
 
-    public LogsManager(String username){
+    public LogsManager(String username, boolean admin){
         this.username = username;
+        this.admin = admin;
         if (!initDB()){
             JOptionPane.showMessageDialog(null, "Init DB Error!", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
             return;
@@ -163,18 +165,30 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemDeleteAllLogs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                if (!admin) {
+                 JOptionPane.showMessageDialog(null, "Only admins can do that. Access denied.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                 return;
+                }
                 deleteAllLogs();
             }
         });
         menuItemDeleteLogHistory.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                if (!admin) {
+                    JOptionPane.showMessageDialog(null, "Only admins can do that. Access denied.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 deleteAllLogHistory();
             }
         });
         menuItemDeleteLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                if (!admin) {
+                    JOptionPane.showMessageDialog(null, "Only admins can do that. Access denied.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 deleteLog();
             }
         });
@@ -278,6 +292,13 @@ public class LogsManager extends javax.swing.JFrame {
 
             int deletedRows =stmt.executeUpdate("DELETE from logs");
             if(deletedRows>0){
+                String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+                String type = "Deletion of all logs";
+                String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
+                        + "VALUES ('" + "" + "', '" + last_edited + "', '" + type + "', '" + "404" + "', '" + ""
+                        + "', '" + username + "', '" + "" + "')";
+                Statement stmt2 = (Statement) connection.createStatement();
+                stmt2.executeUpdate(query2);
                 JOptionPane.showMessageDialog(null, "Successfully deleted all logs", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
             }else{
                 JOptionPane.showMessageDialog(null, "There are no logs to delete", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
@@ -572,7 +593,8 @@ public class LogsManager extends javax.swing.JFrame {
                 String create_users_table ="CREATE TABLE users ("
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "USERNAME varchar(255) DEFAULT NULL,"
-                        + "PASSWORD varchar(255) DEFAULT NULL)";
+                        + "PASSWORD varchar(255) DEFAULT NULL,"
+                        + "ADMIN varchar(255) DEFAULT NULL)";
                 String create_logs_table="CREATE TABLE logs ("
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "AUTHOR varchar(255) DEFAULT NULL,"

@@ -171,7 +171,14 @@ public class Login extends javax.swing.JFrame {
             txtUsername.requestFocus();
             return;
         }
-        LogsManager logsManager = new LogsManager(username);
+        String adminstr = rs.getString(4);
+        boolean admin = false;
+        if (adminstr != null){
+            if (adminstr.equalsIgnoreCase("true")){
+                admin = true;
+            }
+        }
+        LogsManager logsManager = new LogsManager(username, admin);
         frame.dispose();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -184,7 +191,7 @@ public class Login extends javax.swing.JFrame {
     }
 
     static void loginAnonymous(){
-        LogsManager logsManager = new LogsManager("Unknown");
+        LogsManager logsManager = new LogsManager("Unknown", false);
         frame.dispose();
     }
 
@@ -226,7 +233,8 @@ public class Login extends javax.swing.JFrame {
                 String create_users_table ="CREATE TABLE users ("
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "USERNAME varchar(255) DEFAULT NULL,"
-                        + "PASSWORD varchar(255) DEFAULT NULL)";
+                        + "PASSWORD varchar(255) DEFAULT NULL,"
+                        + "ADMIN varchar(255) DEFAULT NULL)";
                 String create_logs_table="CREATE TABLE logs ("
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "AUTHOR varchar(255) DEFAULT NULL,"
