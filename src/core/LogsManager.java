@@ -43,6 +43,7 @@ public class LogsManager extends javax.swing.JFrame {
     static JMenuItem menuItemSaveAs;
     static JMenuItem menuItemLogout;
     static JMenuItem menuItemExit;
+    static JMenuItem menuItemFilterLogs;
     static JTextArea txtLogs;
     static JMenuItem menuItemChangeFontSize;
     static JMenuItem menuItemAbout;
@@ -81,10 +82,12 @@ public class LogsManager extends javax.swing.JFrame {
          * remove all logs (gjort)
          * fixa så man inte kan göra log duplicates (gjort)
          * gör så att man kan spara logs/ändringshistorik i en fil via savefiledialog om jag vill (gjort)
-         * gör db dump i slutet (egentligen behövs ej för om db inte existerar så skapar programmet en)
-         * gör så att man kan logga in eller registrera användare.
-         * gör så att man kan välja att vara anonym och isåfall blir authorn unknown
-         * lägg till så att man kan filtrera loggar sen om jag vill
+         * gör db dump i slutet (egentligen behövs ej för om db inte existerar så skapar programmet en) (gjort)
+         * gör så att man kan logga in eller registrera användare. (gjort)
+         * gör så att man kan välja att vara anonym och isåfall blir authorn unknown (gjort)
+         * lägg till så att man kan filtrera loggar sen om jag vill (gjort)
+         * lägg till så att bara admins kan ta bort loggar (gjort)
+         * förbättra filtreringen av loggar
          */
     }
 
@@ -107,6 +110,7 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemChangeFontSize.setFont(mainFont);
         menuItemAbout.setFont(mainFont);
         menuItemLogout.setFont(mainFont);
+        menuItemFilterLogs.setFont(mainFont);
     }
 
     static void initKeystrokes(){
@@ -117,6 +121,7 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemDeleteLog.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.CTRL_MASK));
         menuItemSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menuItemLogout.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemFilterLogs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
     }
 
     static void initComponents(){
@@ -142,6 +147,7 @@ public class LogsManager extends javax.swing.JFrame {
         menuItemShowLogHistory = new JMenuItem("Get Logs Changes History");
         menuItemAbout = new JMenuItem("About");
         menuItemLogout = new JMenuItem("Logout");
+        menuItemFilterLogs = new JMenuItem("Filter Logs");
     }
 
     static void addListeners(){
@@ -238,6 +244,12 @@ public class LogsManager extends javax.swing.JFrame {
                 Logout();
             }
         });
+        menuItemFilterLogs.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                filterLogs();
+            }
+        });
     }
 
     static void Logout(){
@@ -253,6 +265,7 @@ public class LogsManager extends javax.swing.JFrame {
         fileMenu.add(menuItemShowLogHistory);
         fileMenu.add(menuItemDeleteAllLogs);
         fileMenu.add(menuItemDeleteLogHistory);
+        fileMenu.add(menuItemFilterLogs);
         fileMenu.add(menuItemSaveAs);
         fileMenu.add(menuItemLogout);
         fileMenu.add(menuItemExit);
@@ -552,6 +565,42 @@ public class LogsManager extends javax.swing.JFrame {
                     outFile.close();
                 } catch (IOException e) {}
             }
+        }
+    }
+
+    static void filterLogs(){
+        String filterby = JOptionPane.showInputDialog(null, "Filter by author or body", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
+        try {
+            if (filterby != null){
+                if (filterby.trim().equalsIgnoreCase("author")){
+                    String keyword = JOptionPane.showInputDialog(null, "Enter filter keywords for author", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
+                    Statement stmt = connection.createStatement();
+                    ResultSet rs = stmt.executeQuery("SELECT * from logs where author = '" + keyword + "'");
+                    txtLogs.setText("");
+                    while(rs.next())
+                        if (txtLogs.getText().trim().equals("")) {
+                            txtLogs.setText("ID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nEditors: " + rs.getString(4) + "\r\nBody: " + rs.getString(3));
+                        }else{
+                            txtLogs.append("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nEditors: " + rs.getString(4) + "\r\nBody: " + rs.getString(3));
+                        }
+                }else if (filterby.trim().equalsIgnoreCase("body")){
+                    String keyword = JOptionPane.showInputDialog(null, "Enter filter keywords for author", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
+                    Statement stmt = connection.createStatement();
+                    ResultSet rs = stmt.executeQuery("SELECT * from logs where body = '" + keyword + "'");
+                    txtLogs.setText("");
+                    while(rs.next())
+                        if (txtLogs.getText().trim().equals("")) {
+                            txtLogs.setText("ID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nEditors: " + rs.getString(4) + "\r\nBody: " + rs.getString(3));
+                        }else{
+                            txtLogs.append("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nEditors: " + rs.getString(4) + "\r\nBody: " + rs.getString(3));
+                        }
+                }else{
+                    JOptionPane.showMessageDialog(null, "You can only filter by author or body. Nothing else at the moment.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
