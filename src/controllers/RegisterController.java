@@ -1,6 +1,5 @@
 package controllers;
 
-import config.Env;
 import models.LoginModel;
 import models.LogsModel;
 import models.RegisterModel;
@@ -9,22 +8,17 @@ import views.LoginView;
 import views.LogsView;
 import views.RegisterView;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
-public class LoginController {
-    LoginView view;
-    LoginModel model;
+public class RegisterController {
+    RegisterView view;
+    RegisterModel model;
     User user;
 
-    public LoginController(LoginView view, LoginModel model){
+    public RegisterController(RegisterView view, RegisterModel model){
         this.view = view;
         this.model = model;
-        this.view.addListeners(new LoginListener());
+        this.view.addListeners(new RegisterListener());
         this.view.addFrameWindowListener(new FrameWindowListener());
         this.view.addKeyListeners(new UsernameKeyListener(), new PasswordKeyListener());
     }
@@ -38,9 +32,9 @@ public class LoginController {
 
         @Override
         public void keyPressed(KeyEvent keyEvent) {
-                    if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER){
-                        view.getTxtPassword().requestFocus();
-                    }
+            if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER){
+                view.getTxtPassword().requestFocus();
+            }
         }
 
         @Override
@@ -59,7 +53,7 @@ public class LoginController {
         @Override
         public void keyPressed(KeyEvent keyEvent) {
             if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER){
-                view.getBtnLogin().doClick();
+                view.getBtnRegister().doClick();
             }
         }
 
@@ -108,7 +102,7 @@ public class LoginController {
         }
     }
 
-    private class LoginListener implements ActionListener {
+    private class RegisterListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -129,11 +123,24 @@ public class LoginController {
     }
 
     public void Register(){
-        RegisterView registerView = new RegisterView();
-        RegisterModel registerModel = new RegisterModel();
-        RegisterController registerController = new RegisterController(registerView, registerModel);
-        registerView.getFrame().setVisible(true);
-        registerView.getTxtUsername().requestFocus();
+        String username = view.getTxtUsername().getText().trim();
+        String password = view.getTxtPassword().getText().trim();
+        if (!model.Register(username, password)){
+            view.getTxtUsername().setText("");
+            view.getTxtPassword().setText("");
+            view.getTxtUsername().requestFocus();
+            return;
+        }else{
+            view.getFrame().dispose();
+        }
+    }
+
+    public void Login(){
+        LoginView loginView = new LoginView();
+        LoginModel loginModel = new LoginModel();
+        LoginController loginController = new LoginController(loginView, loginModel);
+        loginView.getFrame().setVisible(true);
+        loginView.getTxtUsername().requestFocus();
         view.getFrame().dispose();
     }
 
@@ -144,18 +151,5 @@ public class LoginController {
         LogsController logsController = new LogsController(logsView, logsModel, user);
         logsView.getFrame().setVisible(true);
         view.getFrame().dispose();
-    }
-    
-    public void Login(){
-        String username = view.getTxtUsername().getText().trim();
-        String password = view.getTxtPassword().getText().trim();
-        if (!model.Login(username, password)){
-                view.getTxtUsername().setText("");
-                view.getTxtPassword().setText("");
-                view.getTxtUsername().requestFocus();
-                return;
-            }else{
-                view.getFrame().dispose();
-            }
     }
 }

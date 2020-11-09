@@ -8,4 +8,5 @@ public class Env {
     public static String pass = "Temp2021321%";
     public static String LogsMessageBoxTitle = "LogsManager GUI";
     public static String LoginMessageBoxTitle = "Login GUI";
+    public static String RegisterMessageBoxTitle = "Register GUI";
 }
