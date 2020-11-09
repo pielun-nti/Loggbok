@@ -2,38 +2,35 @@ package core;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 public class LogsView extends javax.swing.JFrame {
-    static JFrame frame;
-    static JMenuBar menuBar;
-    static JMenu fileMenu;
-    static JMenu editMenu;
-    static JMenu settingsMenu;
-    static JMenu aboutMenu;
-    static JScrollPane scroll;
-    static JMenuItem menuitemNewLog;
-    static JMenuItem menuItemGetLogs;
-    static JMenuItem menuItemEditLog;
-    static JMenuItem menuItemDeleteLog;
-    static JMenuItem menuItemShowLogHistory;
-    static JMenuItem menuItemDeleteAllLogs;
-    static JMenuItem menuItemDeleteLogHistory;
-    static JMenuItem menuItemSaveAs;
-    static JMenuItem menuItemLogout;
-    static JMenuItem menuItemExit;
-    static JMenuItem menuItemFilterLogs;
-    static JTextArea txtLogs;
-    static JMenuItem menuItemChangeFontSize;
-    static JMenuItem menuItemAbout;
-    private static String MessageBoxTitle = "LogsManager GUI";
-    private static Font mainFont;
-    static int fontSize = 18;
-    static String username;
-    
+    JFrame frame;
+    JMenuBar menuBar;
+    JMenu fileMenu;
+    JMenu editMenu;
+    JMenu settingsMenu;
+    JMenu aboutMenu;
+    JScrollPane scroll;
+    JMenuItem menuitemNewLog;
+    JMenuItem menuItemGetLogs;
+    JMenuItem menuItemEditLog;
+    JMenuItem menuItemDeleteLog;
+    JMenuItem menuItemShowLogHistory;
+    JMenuItem menuItemDeleteAllLogs;
+    JMenuItem menuItemDeleteLogHistory;
+    JMenuItem menuItemSaveAs;
+    JMenuItem menuItemLogout;
+    JMenuItem menuItemExit;
+    JMenuItem menuItemFilterLogs;
+    JTextArea txtLogs;
+    JMenuItem menuItemChangeFontSize;
+    JMenuItem menuItemAbout;
+    private String MessageBoxTitle = "LogsManager GUI";
+    private Font mainFont;
+    int fontSize = 18;
+    String username;
+
     public LogsView(String username){
         this.username = username;
         initComponents();
@@ -47,7 +44,7 @@ public class LogsView extends javax.swing.JFrame {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.pack();
-        frame.setVisible(true);
+        //frame.setVisible(true);
     }
     void setFonts(){
         frame.setFont(mainFont);
@@ -130,176 +127,172 @@ public class LogsView extends javax.swing.JFrame {
         frame.add(scroll);
     }
 
-    public static JFrame getFrame() {
+    public JFrame getFrame() {
         return frame;
     }
 
     public void setFrame(JFrame frame) {
-        LogsView.frame = frame;
+        this.frame = frame;
     }
 
-    @Override
-    public static JMenuBar getMenuBar() {
-        return menuBar;
-    }
 
     public void setMenuBar(JMenuBar menuBar) {
-        LogsView.menuBar = menuBar;
+        this.menuBar = menuBar;
     }
 
-    public static JMenu getFileMenu() {
+    public JMenu getFileMenu() {
         return fileMenu;
     }
 
     public void setFileMenu(JMenu fileMenu) {
-        LogsView.fileMenu = fileMenu;
+        this.fileMenu = fileMenu;
     }
 
-    public static JMenu getEditMenu() {
+    public JMenu getEditMenu() {
         return editMenu;
     }
 
     public void setEditMenu(JMenu editMenu) {
-        LogsView.editMenu = editMenu;
+        this.editMenu = editMenu;
     }
 
-    public static JMenu getSettingsMenu() {
+    public JMenu getSettingsMenu() {
         return settingsMenu;
     }
 
     public void setSettingsMenu(JMenu settingsMenu) {
-        LogsView.settingsMenu = settingsMenu;
+        this.settingsMenu = settingsMenu;
     }
 
-    public static JMenu getAboutMenu() {
+    public JMenu getAboutMenu() {
         return aboutMenu;
     }
 
     public void setAboutMenu(JMenu aboutMenu) {
-        LogsView.aboutMenu = aboutMenu;
+        this.aboutMenu = aboutMenu;
     }
 
-    public static JScrollPane getScroll() {
+    public JScrollPane getScroll() {
         return scroll;
     }
 
     public void setScroll(JScrollPane scroll) {
-        LogsView.scroll = scroll;
+        this.scroll = scroll;
     }
 
-    public static JMenuItem getMenuitemNewLog() {
+    public JMenuItem getMenuitemNewLog() {
         return menuitemNewLog;
     }
 
     public void setMenuitemNewLog(JMenuItem menuitemNewLog) {
-        LogsView.menuitemNewLog = menuitemNewLog;
+        this.menuitemNewLog = menuitemNewLog;
     }
 
-    public static JMenuItem getMenuItemGetLogs() {
+    public JMenuItem getMenuItemGetLogs() {
         return menuItemGetLogs;
     }
 
     public void setMenuItemGetLogs(JMenuItem menuItemGetLogs) {
-        LogsView.menuItemGetLogs = menuItemGetLogs;
+        this.menuItemGetLogs = menuItemGetLogs;
     }
 
-    public static JMenuItem getMenuItemEditLog() {
+    public JMenuItem getMenuItemEditLog() {
         return menuItemEditLog;
     }
 
     public void setMenuItemEditLog(JMenuItem menuItemEditLog) {
-        LogsView.menuItemEditLog = menuItemEditLog;
+        this.menuItemEditLog = menuItemEditLog;
     }
 
-    public static JMenuItem getMenuItemDeleteLog() {
+    public JMenuItem getMenuItemDeleteLog() {
         return menuItemDeleteLog;
     }
 
     public void setMenuItemDeleteLog(JMenuItem menuItemDeleteLog) {
-        LogsView.menuItemDeleteLog = menuItemDeleteLog;
+        this.menuItemDeleteLog = menuItemDeleteLog;
     }
 
-    public static JMenuItem getMenuItemShowLogHistory() {
+    public JMenuItem getMenuItemShowLogHistory() {
         return menuItemShowLogHistory;
     }
 
     public void setMenuItemShowLogHistory(JMenuItem menuItemShowLogHistory) {
-        LogsView.menuItemShowLogHistory = menuItemShowLogHistory;
+        this.menuItemShowLogHistory = menuItemShowLogHistory;
     }
 
-    public static JMenuItem getMenuItemDeleteAllLogs() {
+    public JMenuItem getMenuItemDeleteAllLogs() {
         return menuItemDeleteAllLogs;
     }
 
     public void setMenuItemDeleteAllLogs(JMenuItem menuItemDeleteAllLogs) {
-        LogsView.menuItemDeleteAllLogs = menuItemDeleteAllLogs;
+        this.menuItemDeleteAllLogs = menuItemDeleteAllLogs;
     }
 
-    public static JMenuItem getMenuItemDeleteLogHistory() {
+    public JMenuItem getMenuItemDeleteLogHistory() {
         return menuItemDeleteLogHistory;
     }
 
     public void setMenuItemDeleteLogHistory(JMenuItem menuItemDeleteLogHistory) {
-        LogsView.menuItemDeleteLogHistory = menuItemDeleteLogHistory;
+        this.menuItemDeleteLogHistory = menuItemDeleteLogHistory;
     }
 
-    public static JMenuItem getMenuItemSaveAs() {
+    public JMenuItem getMenuItemSaveAs() {
         return menuItemSaveAs;
     }
 
     public void setMenuItemSaveAs(JMenuItem menuItemSaveAs) {
-        LogsView.menuItemSaveAs = menuItemSaveAs;
+        this.menuItemSaveAs = menuItemSaveAs;
     }
 
-    public static JMenuItem getMenuItemLogout() {
+    public JMenuItem getMenuItemLogout() {
         return menuItemLogout;
     }
 
     public void setMenuItemLogout(JMenuItem menuItemLogout) {
-        LogsView.menuItemLogout = menuItemLogout;
+        this.menuItemLogout = menuItemLogout;
     }
 
-    public static JMenuItem getMenuItemExit() {
+    public JMenuItem getMenuItemExit() {
         return menuItemExit;
     }
 
     public void setMenuItemExit(JMenuItem menuItemExit) {
-        LogsView.menuItemExit = menuItemExit;
+        this.menuItemExit = menuItemExit;
     }
 
-    public static JMenuItem getMenuItemFilterLogs() {
+    public JMenuItem getMenuItemFilterLogs() {
         return menuItemFilterLogs;
     }
 
     public void setMenuItemFilterLogs(JMenuItem menuItemFilterLogs) {
-        LogsView.menuItemFilterLogs = menuItemFilterLogs;
+        this.menuItemFilterLogs = menuItemFilterLogs;
     }
 
-    public static JTextArea getTxtLogs() {
+    public JTextArea getTxtLogs() {
         return txtLogs;
     }
 
     public void setTxtLogs(JTextArea txtLogs) {
-        LogsView.txtLogs = txtLogs;
+        this.txtLogs = txtLogs;
     }
 
-    public static JMenuItem getMenuItemChangeFontSize() {
+    public JMenuItem getMenuItemChangeFontSize() {
         return menuItemChangeFontSize;
     }
 
     public void setMenuItemChangeFontSize(JMenuItem menuItemChangeFontSize) {
-        LogsView.menuItemChangeFontSize = menuItemChangeFontSize;
+        this.menuItemChangeFontSize = menuItemChangeFontSize;
     }
 
-    public static JMenuItem getMenuItemAbout() {
+    public JMenuItem getMenuItemAbout() {
         return menuItemAbout;
     }
 
     public void setMenuItemAbout(JMenuItem menuItemAbout) {
-        LogsView.menuItemAbout = menuItemAbout;
+        this.menuItemAbout = menuItemAbout;
     }
 
-    public static String getMessageBoxTitle() {
+    public String getMessageBoxTitle() {
         return MessageBoxTitle;
     }
 
@@ -307,31 +300,51 @@ public class LogsView extends javax.swing.JFrame {
         MessageBoxTitle = messageBoxTitle;
     }
 
-    public static Font getMainFont() {
+    public Font getMainFont() {
         return mainFont;
     }
 
     public void setMainFont(Font mainFont) {
-        LogsView.mainFont = mainFont;
+        this.mainFont = mainFont;
     }
 
-    public static int getFontSize() {
+    public int getFontSize() {
         return fontSize;
     }
 
     public void setFontSize(int fontSize) {
-        LogsView.fontSize = fontSize;
+        this.fontSize = fontSize;
     }
 
-    public static String getUsername() {
+    public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
-        LogsView.username = username;
+        this.username = username;
     }
     public void setLogsTXT(String text){
         txtLogs.setText(text);
+    }
+
+    public void addListeners(ActionListener listener){
+        menuitemNewLog.addActionListener(listener);
+        menuItemEditLog.addActionListener(listener);
+        menuItemDeleteLog.addActionListener(listener);
+        menuItemGetLogs.addActionListener(listener);
+        menuItemShowLogHistory.addActionListener(listener);
+        menuItemDeleteAllLogs.addActionListener(listener);
+        menuItemDeleteLogHistory.addActionListener(listener);
+        menuItemFilterLogs.addActionListener(listener);
+        menuItemSaveAs.addActionListener(listener);
+        menuItemLogout.addActionListener(listener);
+        menuItemExit.addActionListener(listener);
+        menuItemChangeFontSize.addActionListener(listener);
+        menuItemAbout.addActionListener(listener);
+    }
+
+    public void addFrameWindowListener(WindowListener listener){
+        frame.addWindowListener(listener);
     }
 
     public String getLogsTXT(){
@@ -341,5 +354,9 @@ public class LogsView extends javax.swing.JFrame {
     public void appendLogsTXT(String text){
         txtLogs.append(text);
     }
+    public void displayErrorMsg(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "LogsManager GUI", JOptionPane.ERROR_MESSAGE);
+    }
+    
 
 }

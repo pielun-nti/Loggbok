@@ -88,6 +88,7 @@ public class LogsManager extends javax.swing.JFrame {
          * lägg till så att man kan filtrera loggar sen om jag vill (gjort)
          * lägg till så att bara admins kan ta bort loggar (gjort)
          * förbättra filtreringen av loggar
+         * omvandla allt till mvc (models views controllers)
          */
     }
 

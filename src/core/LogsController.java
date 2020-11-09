@@ -2,6 +2,8 @@ package core;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -10,16 +12,126 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class LogsController {
+public class LogsController{
     Connection connection;
-    private String MessageBoxTitle = "LogsManager GUI";
     LogsView view;
     LogsModel model;
 
     public LogsController(LogsView view, LogsModel model){
         this.view = view;
         this.model = model;
+        if (!initDB()){
+            JOptionPane.showMessageDialog(null, "Init DB Error!", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        this.view.addListeners(new LogsListener());
+        this.view.addFrameWindowListener(new FrameWindowListener());
     }
+
+    private class FrameWindowListener implements WindowListener {
+
+        @Override
+        public void windowOpened(WindowEvent windowEvent) {
+
+        }
+
+        @Override
+        public void windowClosing(WindowEvent windowEvent) {
+                    view.getFrame().dispose();
+            }
+
+        @Override
+        public void windowClosed(WindowEvent windowEvent) {
+
+        }
+
+        @Override
+        public void windowIconified(WindowEvent windowEvent) {
+
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent windowEvent) {
+
+        }
+
+        @Override
+        public void windowActivated(WindowEvent windowEvent) {
+
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent windowEvent) {
+
+
+        }
+    }
+
+    private class LogsListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            String command = actionEvent.getActionCommand();
+            System.out.println("Executed command: " + command);
+            if (command != null){
+                if (command.equalsIgnoreCase("Create new log")){
+                    createNewLog();
+                }
+                if (command.equalsIgnoreCase("Edit log")){
+                    editLog();
+                }
+                if (command.equalsIgnoreCase("Delete Log")){
+                    deleteLog();
+                }
+                if (command.equalsIgnoreCase("Get all logs")){
+                    getAllLogs();
+                }
+                if (command.equalsIgnoreCase("Get Logs Changes History")){
+                    getLogHistory();
+                }
+                if (command.equalsIgnoreCase("Delete all logs")){
+                    deleteAllLogs();
+                }
+                if (command.equalsIgnoreCase("Delete all log changes history")){
+                    deleteAllLogHistory();
+                }
+                if (command.equalsIgnoreCase("Filter logs")){
+                    filterLogs();
+                }
+                if (command.equalsIgnoreCase("Save as")){
+                    saveFileDialog();
+                }
+                if (command.equalsIgnoreCase("Logout")){
+                    Logout();
+                }
+                if (command.equalsIgnoreCase("Exit application")){
+                    view.getFrame().dispose();
+                }
+                if (command.equalsIgnoreCase("Change font size")){
+                    int fontSize = view.getFontSize();
+                    try {
+                        fontSize = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter new font size ( current = " + view.getFontSize() + ")", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE));
+                    } catch (NumberFormatException ex){
+                        ex.printStackTrace();
+                        view.displayErrorMsg(ex.toString());
+                    }
+                    Font mainFont = new Font("Verdana", Font.BOLD, fontSize);
+                    view.setMainFont(mainFont);
+                    view.getTxtLogs().setFont(mainFont);
+                    view.getFrame().setFont(mainFont);
+                }
+                if (command.equalsIgnoreCase("About")){
+                    JOptionPane.showMessageDialog(null, "Made by Pierre Lundström", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        }
+        }
+
+        void Logout(){
+        Login login = new Login();
+        view.getFrame().dispose();
+        }
+
     void getAllLogs(){
         Statement stmt= null;
         try {
@@ -49,12 +161,12 @@ public class LogsController {
                 String type = "Deletion of all logs";
                 String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
                         + "VALUES ('" + "" + "', '" + last_edited + "', '" + type + "', '" + "404" + "', '" + ""
-                        + "', '" + username + "', '" + "" + "')";
+                        + "', '" + view.getUsername() + "', '" + "" + "')";
                 Statement stmt2 = (Statement) connection.createStatement();
                 stmt2.executeUpdate(query2);
-                JOptionPane.showMessageDialog(null, "Successfully deleted all logs", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Successfully deleted all logs", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
             }else{
-                JOptionPane.showMessageDialog(null, "There are no logs to delete", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "There are no logs to delete", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
             }
 
         } catch (SQLException e) {
@@ -69,9 +181,9 @@ public class LogsController {
 
             int deletedRows =stmt.executeUpdate("DELETE from changes");
             if(deletedRows>0){
-                JOptionPane.showMessageDialog(null, "Successfully deleted all log changes history", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Successfully deleted all log changes history", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
             }else{
-                JOptionPane.showMessageDialog(null, "There are no log changes history to delete", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "There are no log changes history to delete", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
             }
 
         } catch (SQLException e) {
@@ -87,7 +199,7 @@ public class LogsController {
             ResultSet rs=stmt.executeQuery("select * from changes");
             view.setLogsTXT("");
             while(rs.next())
-                if (txtLogs.getText().trim().equals("")) {
+                if (view.getLogsTXT().trim().equals("")) {
                     view.setLogsTXT("ID: " + rs.getString(1) + "\r\nLog ID: " + rs.getString(2) + "\r\nAuthor: " + rs.getString(3)
                             + "\r\nEditor: " + rs.getString(8)
                             + "\r\nBody: " + rs.getString(4) + "\r\nCreated At: " + rs.getString(5) + "\r\nLast Edited: " + rs.getString(6)
@@ -106,9 +218,9 @@ public class LogsController {
     }
 
     void editLog(){
-        int logid = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter ID of the log you want to edit", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
+        int logid = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter ID of the log you want to edit", view.getMessageBoxTitle(), JOptionPane.QUESTION_MESSAGE));
         if (logid < 0){
-            JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         //get info from the log, show it then allow editing
@@ -118,34 +230,34 @@ public class LogsController {
 
             ResultSet rs=stmt.executeQuery("select * from logs where id = " + logid);
             if (!rs.next()){
-                JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "No log with that ID was found", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-            String logbody = (String) JOptionPane.showInputDialog(null, "Edit body for log id: " + logid, MessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(3));
+            String logbody = (String) JOptionPane.showInputDialog(null, "Edit body for log id: " + logid, view.getMessageBoxTitle(), JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(3));
             if (logbody == null){
-                JOptionPane.showMessageDialog(null, "Body cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Body cannot be null.", view.getMessageBoxTitle(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             if (logbody.trim().equals("")){
-                JOptionPane.showMessageDialog(null, "Body must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Body must have an value.", view.getMessageBoxTitle(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             String query4 = "SELECT * from logs where author = '" + rs.getString(2) + "' and body = '" + logbody + "'";
             Statement stmt4 = (Statement) connection.createStatement();
             ResultSet rs4 = stmt4.executeQuery(query4);
             if (rs4.next()){
-                JOptionPane.showMessageDialog(null, "A log with exactly identical author and body already exists. Please change.", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "A log with exactly identical author and body already exists. Please change.", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
             String editors = rs.getString(4);
             if (editors != null) {
-                if (!editors.contains(username)) {
+                if (!editors.contains(view.getUsername())) {
                     if (editors.trim().equals("")){
-                        editors = username;
+                        editors = view.getUsername();
                     }else {
-                        editors += ", " + username;
+                        editors += ", " + view.getUsername();
                     }
                 }
             }
@@ -170,22 +282,22 @@ public class LogsController {
                 String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
                         + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '"
                         + rs.getString(2) + "', '"
-                        + username + "', '"
+                        + view.getUsername() + "', '"
                         + logbody + "')";
                 Statement stmt2 = (Statement) connection.createStatement();
                 stmt2.executeUpdate(query2);
             }
             //}
-            JOptionPane.showMessageDialog(null, "Successfully updated author and body for log id: " + logid, MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Successfully updated author and body for log id: " + logid, view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     void deleteLog(){
-        int logid = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter ID of the log you want to delete", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
+        int logid = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter ID of the log you want to delete", view.getMessageBoxTitle(), JOptionPane.QUESTION_MESSAGE));
         if (logid < 0){
-            JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         //get info from the log, show it then allow editing
@@ -195,7 +307,7 @@ public class LogsController {
 
             ResultSet rs=stmt.executeQuery("select * from logs where id = " + logid);
             if (!rs.next()){
-                JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "No log with that ID was found", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
             //while(rs.next()) {
@@ -213,7 +325,7 @@ public class LogsController {
             String type = "Deletion";
             String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
                     + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + rs.getString(2)
-                    + "', '" + username + "', '" + rs.getString(3) + "')";
+                    + "', '" + view.getUsername() + "', '" + rs.getString(3) + "')";
             Statement stmt2 = (Statement) connection.createStatement();
             stmt2.executeUpdate(query2);
             stmt = (Statement) connection.createStatement();
@@ -221,21 +333,21 @@ public class LogsController {
             stmt.executeUpdate(query1);
             //update changes here
             //}
-            JOptionPane.showMessageDialog(null, "Successfully deleted log with id: " + logid, MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Successfully deleted log with id: " + logid, view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     void createNewLog(){
-        String author = username;
-        String body = (JOptionPane.showInputDialog(null, "Enter log body", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
+        String author = view.getUsername();
+        String body = (JOptionPane.showInputDialog(null, "Enter log body", view.getMessageBoxTitle(), JOptionPane.QUESTION_MESSAGE));
         if (author == null || body == null){
-            JOptionPane.showMessageDialog(null, "Author or body cannot be null.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Author or body cannot be null.", view.getMessageBoxTitle(), JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (author.trim().equals("") || body.trim().equals("")){
-            JOptionPane.showMessageDialog(null, "Author and body must have an value.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Author and body must have an value.", view.getMessageBoxTitle(), JOptionPane.ERROR_MESSAGE);
             return;
         }
         try {
@@ -243,7 +355,7 @@ public class LogsController {
             Statement stmt4 = (Statement) connection.createStatement();
             ResultSet rs4 = stmt4.executeQuery(query4);
             if (rs4.next()){
-                JOptionPane.showMessageDialog(null, "A log with exactly identical author and body already exists. Please change.", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "A log with exactly identical author and body already exists. Please change.", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
@@ -255,7 +367,7 @@ public class LogsController {
             Statement stmt3 = (Statement) connection.createStatement();
             ResultSet rs=stmt3.executeQuery(query3);
             if (!rs.next()){
-                JOptionPane.showMessageDialog(null, "No log with that ID was found", MessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "No log with that ID was found", view.getMessageBoxTitle(), JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
             int logid = rs.getInt(1);
@@ -265,7 +377,7 @@ public class LogsController {
             String type = "Creation";
             String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
                     + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '"
-                    + author + "', '" + username + "', '"
+                    + author + "', '" + view.getUsername() + "', '"
                     + body + "')";
             Statement stmt2 = (Statement) connection.createStatement();
             stmt2.executeUpdate(query2);
@@ -295,10 +407,10 @@ public class LogsController {
         BufferedWriter outFile = null;
         try {
             outFile = new BufferedWriter(new FileWriter(file));
-            outFile.write(txtLogs.getText());
+            outFile.write(view.getLogsTXT());
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error writing to saved file", MessageBoxTitle, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error writing to saved file", view.getMessageBoxTitle(), JOptionPane.WARNING_MESSAGE);
         } finally {
             if (outFile != null) {
                 try {
@@ -309,33 +421,33 @@ public class LogsController {
     }
 
     void filterLogs(){
-        String filterby = JOptionPane.showInputDialog(null, "Filter by author or body", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
+        String filterby = JOptionPane.showInputDialog(null, "Filter by author or body", view.getMessageBoxTitle(), JOptionPane.QUESTION_MESSAGE);
         try {
             if (filterby != null){
                 if (filterby.trim().equalsIgnoreCase("author")){
-                    String keyword = JOptionPane.showInputDialog(null, "Enter filter keywords for author", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
+                    String keyword = JOptionPane.showInputDialog(null, "Enter filter keywords for author", view.getMessageBoxTitle(), JOptionPane.QUESTION_MESSAGE);
                     Statement stmt = connection.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT * from logs where author = '" + keyword + "'");
                     view.setLogsTXT("");
                     while(rs.next())
-                        if (txtLogs.getText().trim().equals("")) {
+                        if (view.getLogsTXT().trim().equals("")) {
                             view.setLogsTXT("ID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nEditors: " + rs.getString(4) + "\r\nBody: " + rs.getString(3));
                         }else{
                             view.appendLogsTXT("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nEditors: " + rs.getString(4) + "\r\nBody: " + rs.getString(3));
                         }
                 }else if (filterby.trim().equalsIgnoreCase("body")){
-                    String keyword = JOptionPane.showInputDialog(null, "Enter filter keywords for author", MessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
+                    String keyword = JOptionPane.showInputDialog(null, "Enter filter keywords for author", view.getMessageBoxTitle(), JOptionPane.QUESTION_MESSAGE);
                     Statement stmt = connection.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT * from logs where body = '" + keyword + "'");
                     view.setLogsTXT("");
                     while(rs.next())
-                        if (txtLogs.getText().trim().equals("")) {
+                        if (view.getLogsTXT().trim().equals("")) {
                             view.setLogsTXT("ID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nEditors: " + rs.getString(4) + "\r\nBody: " + rs.getString(3));
                         }else{
                             view.appendLogsTXT("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nAuthor: " + rs.getString(2) + "\r\nEditors: " + rs.getString(4) + "\r\nBody: " + rs.getString(3));
                         }
                 }else{
-                    JOptionPane.showMessageDialog(null, "You can only filter by author or body. Nothing else at the moment.", MessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "You can only filter by author or body. Nothing else at the moment.", view.getMessageBoxTitle(), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
@@ -344,7 +456,7 @@ public class LogsController {
         }
     }
 
-    public static boolean initDB(){
+    public boolean initDB(){
         boolean success = true;
 
         String driverName = Env.driverName;
