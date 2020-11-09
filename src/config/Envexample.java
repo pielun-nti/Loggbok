@@ -11,5 +11,6 @@ public class Envexample {
     public static String pass = "";
     public static String LogsMessageBoxTitle = "LogsManager GUI";
     public static String LoginMessageBoxTitle = "Login GUI";
+    public static String RegisterMessageBoxTitle = "Register GUI";
 
 }
