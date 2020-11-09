@@ -8,6 +8,10 @@ import models.User;
 import views.LoginView;
 import views.LogsView;
 
+/**
+ * Loggbok gjord av Pierre 2020-11-09
+ * Innan du kör programmet, fyll i dina databasvariabler i src/config/Env.java filen
+ */
 public class Main {
     public static void main(String[] args) {
         LoginView loginView = new LoginView();

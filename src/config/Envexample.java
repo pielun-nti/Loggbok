@@ -9,5 +9,7 @@ public class Envexample {
     public static String conURL = "jdbc:mysql://localhost:3306/" + dbName + "?characterEncoding=latin1";
     public static String user = "";
     public static String pass = "";
+    public static String LogsMessageBoxTitle = "LogsManager GUI";
+    public static String LoginMessageBoxTitle = "Login GUI";
 
 }
