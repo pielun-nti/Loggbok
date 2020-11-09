@@ -1,4 +1,6 @@
-package core;
+package models;
+
+import config.Env;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -270,7 +272,7 @@ public class LogsModel {
         return null;
     }
 
-    void deleteAllLogHistory(){
+    public void deleteAllLogHistory(){
         Statement stmt= null;
         try {
             stmt = db.getConnection().createStatement();
@@ -287,7 +289,7 @@ public class LogsModel {
         }
     }
 
-    void deleteAllLogs(){
+    public void deleteAllLogs(){
         Statement stmt= null;
         try {
             stmt = db.getConnection().createStatement();

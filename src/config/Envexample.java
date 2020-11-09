@@ -1,4 +1,4 @@
-package core;
+package config;
 /**
  * Byt namnet på denna klass till Env och byt ut dessa variabler till de som passar din databas
  * Mvh Pierre

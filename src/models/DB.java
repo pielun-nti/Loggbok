@@ -1,4 +1,6 @@
-package core;
+package models;
+
+import config.Env;
 
 import javax.swing.*;
 import java.sql.Connection;

@@ -1,4 +1,10 @@
-package core;
+package old;
+
+import config.Env;
+import controllers.LogsController;
+import models.LogsModel;
+import models.User;
+import views.LogsView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.sql.*;
-import java.util.Arrays;
 
 public class Login extends javax.swing.JFrame {
 
@@ -178,16 +183,18 @@ public class Login extends javax.swing.JFrame {
                 admin = true;
             }
         }
-        LogsManager logsManager = new LogsManager(username, admin);
+            User user = new User(username, admin);
+            LogsView logsView = new LogsView(user);
+            LogsModel logsModel = new LogsModel(user);
+            LogsController logsController = new LogsController(logsView, logsModel, user);
+            logsView.getFrame().setVisible(true);
         frame.dispose();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    static void removeUser(){
-        //this.user = null;
-    }
+
 
     static void Register(){
         Register register = new Register();
@@ -195,7 +202,11 @@ public class Login extends javax.swing.JFrame {
     }
 
     static void loginAnonymous(){
-        LogsManager logsManager = new LogsManager("Unknown", false);
+        User user = new User("Unknown", false);
+        LogsView logsView = new LogsView(user);
+        LogsModel logsModel = new LogsModel(user);
+        LogsController logsController = new LogsController(logsView, logsModel, user);
+        logsView.getFrame().setVisible(true);
         frame.dispose();
     }
 

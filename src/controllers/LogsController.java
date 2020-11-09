@@ -1,19 +1,19 @@
-package core;
+package controllers;
+
+import config.Env;
+import core.*;
+import models.LoginModel;
+import models.LogsModel;
+import models.User;
+import views.LoginView;
+import views.LogsView;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 public class LogsController{
-    Connection connection;
     LogsView view;
     LogsModel model;
     User user;
@@ -126,8 +126,11 @@ public class LogsController{
         }
 
         void Logout(){
-        Login login = new Login();
-        login.removeUser();
+            LoginView loginView = new LoginView();
+            LoginModel loginModel = new LoginModel();
+            LoginController loginController = new LoginController(loginView, loginModel);
+            loginView.getFrame().setVisible(true);
+            loginView.getTxtUsername().requestFocus();
         view.getFrame().dispose();
         }
 

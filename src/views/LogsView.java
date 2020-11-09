@@ -1,4 +1,7 @@
-package core;
+package views;
+
+import config.Env;
+import models.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -340,7 +343,7 @@ public class LogsView extends javax.swing.JFrame {
         txtLogs.append(text);
     }
     public void displayErrorMsg(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "LogsManager GUI", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, msg, Env.LogsMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
     }
     
 

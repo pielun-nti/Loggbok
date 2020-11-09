@@ -1,12 +1,19 @@
 package core;
 
+import controllers.LoginController;
+import controllers.LogsController;
+import models.LoginModel;
+import models.LogsModel;
+import models.User;
+import views.LoginView;
+import views.LogsView;
+
 public class Main {
     public static void main(String[] args) {
-        //Login login = new Login();
-        User user = new User("pierre", true);
-        LogsView logsView = new LogsView(user);
-        LogsModel logsModel = new LogsModel(user);
-        LogsController logsController = new LogsController(logsView, logsModel, user);
-        logsView.getFrame().setVisible(true);
+        LoginView loginView = new LoginView();
+        LoginModel loginModel = new LoginModel();
+        LoginController loginController = new LoginController(loginView, loginModel);
+        loginView.getFrame().setVisible(true);
+        loginView.getTxtUsername().requestFocus();
     }
 }
