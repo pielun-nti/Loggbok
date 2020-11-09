@@ -185,6 +185,10 @@ public class Login extends javax.swing.JFrame {
         }
     }
 
+    static void removeUser(){
+        //this.user = null;
+    }
+
     static void Register(){
         Register register = new Register();
         frame.dispose();

@@ -26,13 +26,12 @@ public class LogsView extends javax.swing.JFrame {
     JTextArea txtLogs;
     JMenuItem menuItemChangeFontSize;
     JMenuItem menuItemAbout;
-    private String MessageBoxTitle = "LogsManager GUI";
     private Font mainFont;
     int fontSize = 18;
-    String username;
+    User user;
 
-    public LogsView(String username){
-        this.username = username;
+    public LogsView(User user){
+        this.user = user;
         initComponents();
         setFonts();
         initKeystrokes();
@@ -80,7 +79,7 @@ public class LogsView extends javax.swing.JFrame {
     }
 
     void initComponents() {
-        frame = new JFrame("LogsManager - logged in as: " + username);
+        frame = new JFrame("LogsManager - logged in as: " + user.getUsername());
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
         editMenu = new JMenu("Edit");
@@ -292,14 +291,6 @@ public class LogsView extends javax.swing.JFrame {
         this.menuItemAbout = menuItemAbout;
     }
 
-    public String getMessageBoxTitle() {
-        return MessageBoxTitle;
-    }
-
-    public void setMessageBoxTitle(String messageBoxTitle) {
-        MessageBoxTitle = messageBoxTitle;
-    }
-
     public Font getMainFont() {
         return mainFont;
     }
@@ -316,13 +307,7 @@ public class LogsView extends javax.swing.JFrame {
         this.fontSize = fontSize;
     }
 
-    public String getUsername() {
-        return username;
-    }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
     public void setLogsTXT(String text){
         txtLogs.setText(text);
     }
