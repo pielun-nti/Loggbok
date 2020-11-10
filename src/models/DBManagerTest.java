@@ -35,7 +35,7 @@ public class DBManagerTest {
         ArrayList<String> setvalues = new ArrayList<>();
         setcolumns.add("author");
         setvalues.add("editedbydbmanager");
-        if (dbManager.editRowInTable(table, columns, values, setcolumns, setvalues)){
+        if (dbManager.edit(table, columns, values, setcolumns, setvalues)){
             JOptionPane.showMessageDialog(null, "Successfully edited using db manager", "DBManagerTest", JOptionPane.INFORMATION_MESSAGE);
         }else{
             JOptionPane.showMessageDialog(null, "Failed to edit using db manager", "DBManagerTest", JOptionPane.ERROR_MESSAGE);
@@ -61,6 +61,12 @@ public class DBManagerTest {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        if (dbManager.delete(table, setcolumns, setvalues)){
+            JOptionPane.showMessageDialog(null, "Successfully deleted using db manaager", "DBManagerTest", JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            JOptionPane.showMessageDialog(null, "Failed to delete using db manager", "DBManagerTest", JOptionPane.ERROR_MESSAGE);
+
         }
     }
 }

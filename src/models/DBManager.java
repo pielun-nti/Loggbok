@@ -18,6 +18,41 @@ public class DBManager {
         }
     }
 
+    public boolean deleteAll(String table){
+        return false;
+    }
+
+    public boolean delete(String table, ArrayList<String> filtercolumns, ArrayList<String> filtervalues){
+        Statement stmt = null;
+        try {
+            stmt = (Statement) db.getConnection().createStatement();
+            String query = "delete from " + table + " where ";
+
+            for (int i = 0; i < filtercolumns.size(); i++){
+                if (filtercolumns.get(i) != null){
+                    if (i == 0){
+                        if (i == (filtercolumns.size() - 1)){
+                            query += filtercolumns.get(i) + " = '" + filtervalues.get(i) + "'";
+                        }else {
+                            query += filtercolumns.get(i) + " = '" + filtervalues.get(i);
+                        }
+                    }else if (i < (filtercolumns.size() - 1)){
+                        query += "' and " + filtercolumns.get(i) + " = '" + filtervalues.get(i);
+                    }else if (i == (filtercolumns.size() - 1)){
+                        query += "' and " + filtercolumns.get(i) + " = '" + filtervalues.get(i) + "'";
+                    }
+                }
+            }
+            System.out.println("Executing query: " + query);
+            stmt.executeUpdate(query);
+            System.out.println("Successfully Executed Query: " + query);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public ResultSet selectAll(String table){
         Statement stmt= null;
         try {
@@ -63,7 +98,7 @@ public class DBManager {
         return null;
     }
 
-    public boolean editRowInTable(String table, ArrayList<String> filtercolumns, ArrayList<String> filtervalues, ArrayList<String> setcolumns, ArrayList<String> setvalues){
+    public boolean edit(String table, ArrayList<String> filtercolumns, ArrayList<String> filtervalues, ArrayList<String> setcolumns, ArrayList<String> setvalues){
         Statement stmt = null;
         try {
             stmt = db.getConnection().createStatement();
