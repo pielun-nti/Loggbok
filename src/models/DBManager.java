@@ -18,11 +18,55 @@ public class DBManager {
         }
     }
 
+    public ResultSet selectAll(String table){
+        Statement stmt= null;
+        try {
+            stmt = db.getConnection().createStatement();
+            String query = "select * from " + table;
+            System.out.println("Executing query: " + query);
+            ResultSet rs=stmt.executeQuery(query);
+            System.out.println("Successfully Executed Query: " + query);
+            return rs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ResultSet select(String table, ArrayList<String> columns){
+        Statement stmt= null;
+        try {
+            stmt = db.getConnection().createStatement();
+            String query = "select ";
+            for (int i = 0; i < columns.size(); i++){
+                if (columns.get(i) != null){
+                    if (i == 0) {
+                        if (i == (columns.size() - 1)){
+                            query += columns.get(i) + " from " + table;
+                        }else {
+                            query += columns.get(i);
+                        }
+                    }else if (i < (columns.size() - 1)){
+                        query += ", " + columns.get(i);
+                    } else if (i == (columns.size() - 1)){
+                        query += ", " + columns.get(i) + " from " + table;
+                    }
+                }
+            }
+            System.out.println("Executing query: " + query);
+            ResultSet rs=stmt.executeQuery(query);
+            System.out.println("Successfully Executed Query: " + query);
+            return rs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public boolean editRowInTable(String table, ArrayList<String> filtercolumns, ArrayList<String> filtervalues, ArrayList<String> setcolumns, ArrayList<String> setvalues){
         Statement stmt = null;
         try {
             stmt = db.getConnection().createStatement();
-            //String queryold = "update logs set editors='" + editors + "' " + "where id in(" + logid + ")";
             String query = "update " + table + " set ";
 
             for (int i = 0; i < setcolumns.size(); i++){

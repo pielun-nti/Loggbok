@@ -1,6 +1,8 @@
 package models;
 
 import javax.swing.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class DBManagerTest {
@@ -37,6 +39,28 @@ public class DBManagerTest {
             JOptionPane.showMessageDialog(null, "Successfully edited using db manager", "DBManagerTest", JOptionPane.INFORMATION_MESSAGE);
         }else{
             JOptionPane.showMessageDialog(null, "Failed to edit using db manager", "DBManagerTest", JOptionPane.ERROR_MESSAGE);
+        }
+        try {
+        ResultSet all = dbManager.selectAll(table);
+        if (all != null) {
+            while (all.next()) {
+                System.out.println("Select all: " + all.getString(2));
+            }
+        }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            ArrayList<String> col = new ArrayList<>();
+            col.add("author");
+            ResultSet authors = dbManager.select(table, col);
+            if (authors != null) {
+                while (authors.next()) {
+                    System.out.println("Select authors: " + authors.getString(1));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }
