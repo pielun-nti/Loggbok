@@ -20,5 +20,23 @@ public class DBManagerTest {
         }else{
             JOptionPane.showMessageDialog(null, "Failed to insert using db manager", "DBManagerTest", JOptionPane.ERROR_MESSAGE);
         }
+        if (dbManager.checkDuplicate(table, columns, values)){
+            JOptionPane.showMessageDialog(null, "Duplicate exists", "DBManagerTest", JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            JOptionPane.showMessageDialog(null, "Duplicate does not exist", "DBManagerTest", JOptionPane.ERROR_MESSAGE);
+        }
+        ArrayList<String> filtervalues = new ArrayList<>();
+        ArrayList<String> filtercolumns = new ArrayList<>();
+        filtercolumns.add("author");
+        filtervalues.add("Pierre");
+        ArrayList<String> setcolumns = new ArrayList<>();
+        ArrayList<String> setvalues = new ArrayList<>();
+        setcolumns.add("author");
+        setvalues.add("editedbydbmanager");
+        if (dbManager.editRowInTable(table, columns, values, setcolumns, setvalues)){
+            JOptionPane.showMessageDialog(null, "Successfully edited using db manager", "DBManagerTest", JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            JOptionPane.showMessageDialog(null, "Failed to edit using db manager", "DBManagerTest", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
