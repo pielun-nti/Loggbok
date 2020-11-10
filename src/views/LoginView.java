@@ -40,8 +40,6 @@ public class LoginView extends javax.swing.JFrame {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.pack();
-        //frame.setVisible(true);
-        //txtUsername.requestFocus();
     }
 
     void initKeystrokes(){

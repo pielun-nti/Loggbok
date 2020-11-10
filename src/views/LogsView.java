@@ -46,7 +46,6 @@ public class LogsView extends javax.swing.JFrame {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.pack();
-        //frame.setVisible(true);
     }
     void setFonts(){
         frame.setFont(mainFont);
