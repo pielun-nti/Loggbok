@@ -2,24 +2,20 @@ package models;
 
 import config.Env;
 import controllers.LogsController;
-import old.LogsManager;
 import views.LogsView;
 
 import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class RegisterModel {
 
-    DB db;
+    DBManager dbManager;
     User user;
     public RegisterModel(){
-        db = new DB();
-        if (!db.initDB()){
-            JOptionPane.showMessageDialog(null, "Init DB Error!", Env.RegisterMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        dbManager = new DBManager();
     }
 
     public boolean Register(String username, String password){
@@ -32,9 +28,11 @@ public class RegisterModel {
             return false;
         }
         try {
-            String query2 = "SELECT * from users where username = '" + username + "'";
-            Statement stmt2 = (Statement) db.getConnection().createStatement();
-            ResultSet rs2 = stmt2.executeQuery(query2);
+            ArrayList<String> col = new ArrayList<>();
+            ArrayList<String> val = new ArrayList<>();
+            col.add("username");
+            val.add(username);
+            ResultSet rs2 = dbManager.selectAllWhere("users", col, val);
             if (rs2.next()){
                 JOptionPane.showMessageDialog(null, "That username is already taken. Try another one..", Env.RegisterMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
                 return false;
@@ -42,20 +40,18 @@ public class RegisterModel {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        String query = "INSERT INTO users (username, password) VALUES ('" + username + "', '" + password + "')";
-        Statement stmt = null;
-        try {
-            stmt = (Statement) db.getConnection().createStatement();
-            stmt.executeUpdate(query);
+        ArrayList<String> col = new ArrayList<>();
+        ArrayList<String> val = new ArrayList<>();
+        col.add("username");
+        col.add("password");
+        val.add(username);
+        val.add(password);
+            dbManager.insert("users", col, val);
             user = new User(username, false);
             LogsView logsView = new LogsView(user);
             LogsModel logsModel = new LogsModel(user);
             LogsController logsController = new LogsController(logsView, logsModel, user);
             logsView.getFrame().setVisible(true);
             return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 }

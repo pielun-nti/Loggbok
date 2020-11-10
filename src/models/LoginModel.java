@@ -8,16 +8,13 @@ import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class LoginModel {
-    DB db;
+    DBManager dbManager;
     User user;
     public LoginModel(){
-        db = new DB();
-        if (!db.initDB()){
-            JOptionPane.showMessageDialog(null, "Init DB Error!", Env.LoginMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        dbManager = new DBManager();
     }
 
     public boolean Login(String username, String password){
@@ -29,11 +26,14 @@ public class LoginModel {
             JOptionPane.showMessageDialog(null, "Username and password must have an value.", Env.LoginMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        String query = "SELECT * from users where username = '" + username + "' and password = '" + password + "'";
-        Statement stmt = null;
+        ArrayList<String> col = new ArrayList<>();
+        ArrayList<String> val = new ArrayList<>();
+        col.add("username");
+        col.add("password");
+        val.add(username);
+        val.add(password);
         try {
-            stmt = (Statement) db.getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            ResultSet rs = dbManager.selectAllWhere("users", col, val);
             if (!rs.next()){
                 JOptionPane.showMessageDialog(null, "Invalid username or password. Access denied.", Env.LoginMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
                 return false;
