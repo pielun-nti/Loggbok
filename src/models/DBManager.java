@@ -32,9 +32,17 @@ public class DBManager {
         Statement stmt= null;
         try {
             stmt = db.getConnection().createStatement();
-            System.out.println("Executing query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
             stmt.executeUpdate(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -46,9 +54,17 @@ public class DBManager {
         Statement stmt= null;
         try {
             stmt = db.getConnection().createStatement();
-            System.out.println("Executing query: " + query);
-            ResultSet rs = stmt.executeQuery(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
+            ResultSet rs=stmt.executeQuery(query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             return rs;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -70,9 +86,17 @@ public class DBManager {
         try {
             stmt = db.getConnection().createStatement();
             String query = "DELETE from " + table;
-            System.out.println("Executing query: " + query);
-            int deletedRows =stmt.executeUpdate(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
+            int deletedRows = stmt.executeUpdate(query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             return deletedRows;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -101,9 +125,17 @@ public class DBManager {
                     }
                 }
             }
-            System.out.println("Executing query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
             stmt.executeUpdate(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,9 +148,17 @@ public class DBManager {
         try {
             stmt = db.getConnection().createStatement();
             String query = "select * from " + table;
-            System.out.println("Executing query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
             ResultSet rs=stmt.executeQuery(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             return rs;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -146,9 +186,17 @@ public class DBManager {
                     }
                 }
             }
-            System.out.println("Executing query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
             ResultSet rs=stmt.executeQuery(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             return rs;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -176,9 +224,17 @@ public class DBManager {
                     }
                 }
             }
-            System.out.println("Executing query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
             ResultSet rs=stmt.executeQuery(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             return rs;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -223,9 +279,17 @@ public class DBManager {
                     }
                 }
             }
-            System.out.println("Executing query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
             stmt.executeUpdate(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -250,9 +314,17 @@ public class DBManager {
                     }
                 }
             }
-            System.out.println("Executing query: " + query);
-            ResultSet rs = stmt.executeQuery(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
+            ResultSet rs=stmt.executeQuery(query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             if (rs.next()){
                 return true;
             }else{
@@ -280,9 +352,17 @@ public class DBManager {
                     }
                 }
             }
-            System.out.println("Executing query: " + query);
-            ResultSet rs = stmt.executeQuery(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
+            ResultSet rs=stmt.executeQuery(query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             if (rs.next()){
                 return true;
             }else{
@@ -316,9 +396,17 @@ public class DBManager {
                 }
             }
             query += ")";
-            System.out.println("Executing query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
             stmt.executeUpdate(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -349,9 +437,17 @@ public class DBManager {
                 }
             }
             query += ")";
-            System.out.println("Executing query: " + query);
+            if (query.contains("password")){
+                System.out.println("Executing query: " + "Password protected");
+            }else {
+                System.out.println("Executing query: " + query);
+            }
             stmt.executeUpdate(query);
-            System.out.println("Successfully Executed Query: " + query);
+            if (query.contains("password")) {
+                System.out.println("Successfully Executed Query: " + "Password protected");
+            } else {
+                System.out.println("Successfully Executed Query: " + query);
+            }
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
