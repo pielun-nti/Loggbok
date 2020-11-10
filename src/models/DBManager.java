@@ -18,8 +18,19 @@ public class DBManager {
         }
     }
 
-    public boolean deleteAll(String table){
-        return false;
+    public int deleteAll(String table){
+        Statement stmt= null;
+        try {
+            stmt = db.getConnection().createStatement();
+            String query = "DELETE from " + table;
+            System.out.println("Executing query: " + query);
+            int deletedRows =stmt.executeUpdate(query);
+            System.out.println("Successfully Executed Query: " + query);
+            return deletedRows;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public boolean delete(String table, ArrayList<String> filtercolumns, ArrayList<String> filtervalues){

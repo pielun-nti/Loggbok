@@ -68,5 +68,11 @@ public class DBManagerTest {
             JOptionPane.showMessageDialog(null, "Failed to delete using db manager", "DBManagerTest", JOptionPane.ERROR_MESSAGE);
 
         }
+        int deletedRows = dbManager.deleteAll(table);
+        if (deletedRows > 0){
+            JOptionPane.showMessageDialog(null, "Successfully deleted all using db manager", "DBManagerTest", JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            JOptionPane.showMessageDialog(null, "Failed to delete all using db manager", "DBManagerTest", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
