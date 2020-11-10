@@ -18,6 +18,53 @@ public class DBManager {
         }
     }
 
+    public DBManager(DB db){
+        this.db = db;
+        if (db.getConnection() == null) {
+            if (!db.initDB()) {
+                JOptionPane.showMessageDialog(null, "Init DB Error!", Env.DBMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+    }
+    
+    public boolean executeUpdate(String query){
+        Statement stmt= null;
+        try {
+            stmt = db.getConnection().createStatement();
+            System.out.println("Executing query: " + query);
+            stmt.executeUpdate(query);
+            System.out.println("Successfully Executed Query: " + query);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public ResultSet executeQuery(String query){
+        Statement stmt= null;
+        try {
+            stmt = db.getConnection().createStatement();
+            System.out.println("Executing query: " + query);
+            ResultSet rs = stmt.executeQuery(query);
+            System.out.println("Successfully Executed Query: " + query);
+            return rs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public DB getDb() {
+        return db;
+    }
+
+    public void setDB(DB db){
+        this.db = db;
+    }
+
     public int deleteAll(String table){
         Statement stmt= null;
         try {
@@ -79,7 +126,37 @@ public class DBManager {
         return null;
     }
 
-    public ResultSet select(String table, ArrayList<String> columns){
+    public ResultSet selectAllWhere(String table, ArrayList<String> filtercolumns, ArrayList<String> filtervalues){
+        Statement stmt= null;
+        try {
+            stmt = db.getConnection().createStatement();
+            String query = "select * from " + table + " where ";
+            for (int i = 0; i < filtercolumns.size(); i++){
+                if (filtercolumns.get(i) != null){
+                    if (i == 0){
+                        if ((filtercolumns.size() - 1) == i) {
+                            query += filtercolumns.get(i) + " = '" + filtervalues.get(i) + "'";
+                        }else{
+                            query += filtercolumns.get(i) + " = '" + filtervalues.get(i);
+                        }
+                    }else if (i < (filtercolumns.size() - 1)){
+                        query += "' and " + filtercolumns.get(i) + " = '" + filtervalues.get(i);
+                    }else if (i == (filtercolumns.size() - 1)){
+                        query += "' and " + filtercolumns.get(i) + " = '" + filtervalues.get(i) + "'";
+                    }
+                }
+            }
+            System.out.println("Executing query: " + query);
+            ResultSet rs=stmt.executeQuery(query);
+            System.out.println("Successfully Executed Query: " + query);
+            return rs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ResultSet selectColumn(String table, ArrayList<String> columns){
         Statement stmt= null;
         try {
             stmt = db.getConnection().createStatement();

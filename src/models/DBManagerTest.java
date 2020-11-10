@@ -1,5 +1,7 @@
 package models;
 
+import config.Env;
+
 import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -53,7 +55,7 @@ public class DBManagerTest {
         try {
             ArrayList<String> col = new ArrayList<>();
             col.add("author");
-            ResultSet authors = dbManager.select(table, col);
+            ResultSet authors = dbManager.selectColumn(table, col);
             if (authors != null) {
                 while (authors.next()) {
                     System.out.println("Select authors: " + authors.getString(1));
@@ -73,6 +75,19 @@ public class DBManagerTest {
             JOptionPane.showMessageDialog(null, "Successfully deleted all using db manager", "DBManagerTest", JOptionPane.INFORMATION_MESSAGE);
         }else{
             JOptionPane.showMessageDialog(null, "Failed to delete all using db manager", "DBManagerTest", JOptionPane.ERROR_MESSAGE);
+        }
+        ArrayList<String> c = new ArrayList<>();
+        ArrayList<String> v = new ArrayList<>();
+        c.add("id");
+        v.add("1");
+        ResultSet rs = dbManager.selectAllWhere("logs", columns, values);
+        try {
+            if (!rs.next()){
+                JOptionPane.showMessageDialog(null, "No log with that ID was found", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

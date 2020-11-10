@@ -12,28 +12,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class LogsModel {
-    DB db;
+    DBManager dbManager;
     User user;
     public LogsModel(User user){
-        db = new DB();
-        if (!db.initDB()){
-            JOptionPane.showMessageDialog(null, "Init DB Error!", Env.LogsMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        dbManager = new DBManager();
         this.user = user;
     }
     public ResultSet getAllLogs(){
-        Statement stmt= null;
-        try {
-            stmt = db.getConnection().createStatement();
-
-            ResultSet rs=stmt.executeQuery("select * from logs");
+        ResultSet rs = dbManager.selectAll("logs");
+        if (rs != null) {
             return rs;
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -43,17 +35,16 @@ public class LogsModel {
             JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        //get info from the log, show it then allow editing
-        Statement stmt= null;
         try {
-            stmt = db.getConnection().createStatement();
-
-            ResultSet rs=stmt.executeQuery("select * from logs where id = " + logid);
+            ArrayList<String> columns = new ArrayList<>();
+            ArrayList<String> values = new ArrayList<>();
+            columns.add("id");
+            values.add(Integer.toString(logid));
+            ResultSet rs = dbManager.selectAllWhere("logs", columns, values);
             if (!rs.next()){
                 JOptionPane.showMessageDialog(null, "No log with that ID was found", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-
             String logbody = (String) JOptionPane.showInputDialog(null, "Edit body for log id: " + logid, Env.LogsMessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(3));
             if (logbody == null){
                 JOptionPane.showMessageDialog(null, "Body cannot be null.", Env.LogsMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
@@ -63,14 +54,17 @@ public class LogsModel {
                 JOptionPane.showMessageDialog(null, "Body must have an value.", Env.LogsMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            String query4 = "SELECT * from logs where author = '" + rs.getString(2) + "' and body = '" + logbody + "'";
-            Statement stmt4 = (Statement) db.getConnection().createStatement();
-            ResultSet rs4 = stmt4.executeQuery(query4);
+            ArrayList<String> col = new ArrayList<>();
+            ArrayList<String> val = new ArrayList<>();
+            col.add("author");
+            col.add("body");
+            val.add(rs.getString(2));
+            val.add(logbody);
+            ResultSet rs4 = dbManager.selectAllWhere("logs", col, val);
             if (rs4.next()){
                 JOptionPane.showMessageDialog(null, "A log with exactly identical author and body already exists. Please change.", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-
             String editors = rs.getString(4);
             if (editors != null) {
                 if (!editors.contains(user.getUsername())) {
@@ -81,31 +75,54 @@ public class LogsModel {
                     }
                 }
             }
-            stmt = (Statement) db.getConnection().createStatement();
-            String query6 = "update logs set editors='" + editors + "' " + "where id in(" + logid + ")";
-            stmt.executeUpdate(query6);
-            //also updates changes here
-            String query3 = "select * from changes where logid = " + logid;
+            ArrayList<String> setcol = new ArrayList<>();
+            ArrayList<String> setval = new ArrayList<>();
+            ArrayList<String> filtercol = new ArrayList<>();
+            ArrayList<String> filterval = new ArrayList<>();
+            setcol.add("editors");
+            setval.add(editors);
+            filtercol.add("id");
+            filterval.add(Integer.toString(logid));
+            dbManager.edit("logs", filtercol, filterval, setcol, setval);
+            ArrayList<String> c = new ArrayList<>();
+            ArrayList<String> v = new ArrayList<>();
+            c.add("logid");
+            v.add(Integer.toString(logid));
 
             if (!logbody.trim().equals(rs.getString(2))){
-                stmt = (Statement) db.getConnection().createStatement();
-                String query1 = "update logs set body='" + logbody + "' " + "where id in(" + logid + ")";
-                stmt.executeUpdate(query1);
-                Statement stmt3 = (Statement) db.getConnection().createStatement();
-                ResultSet rs2=stmt3.executeQuery(query3);
+                ArrayList<String> setcol2 = new ArrayList<>();
+                ArrayList<String> setval2 = new ArrayList<>();
+                ArrayList<String> filtercol2 = new ArrayList<>();
+                ArrayList<String> filterval2 = new ArrayList<>();
+                setcol2.add("body");
+                setval2.add(logbody);
+                filtercol2.add("id");
+                filterval2.add(Integer.toString(logid));
+                dbManager.edit("logs", filtercol2, filterval2, setcol2, setval2);
+                ResultSet rs2= dbManager.selectAllWhere("changes", c, v);
                 String created_at = null;
                 if (rs2.next()) {
                     created_at = rs2.getString(5);
                 }
                 String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
                 String type = "Editing";
-                String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
-                        + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '"
-                        + rs.getString(2) + "', '"
-                        + user.getUsername() + "', '"
-                        + logbody + "')";
-                Statement stmt2 = (Statement) db.getConnection().createStatement();
-                stmt2.executeUpdate(query2);
+                ArrayList<String> changescol = new ArrayList<>();
+                ArrayList<String> changesval = new ArrayList<>();
+                changescol.add("created_at");
+                changescol.add("last_edited");
+                changescol.add("type");
+                changescol.add("logid");
+                changescol.add("author");
+                changescol.add("editor");
+                changescol.add("body");
+                changesval.add(created_at);
+                changesval.add(last_edited);
+                changesval.add(type);
+                changesval.add(Integer.toString(logid));
+                changesval.add(rs.getString(2));
+                changesval.add(user.getUsername());
+                changesval.add(logbody);
+                dbManager.insert("changes", changescol, changesval);
             }
             JOptionPane.showMessageDialog(null, "Successfully updated author and body for log id: " + logid, Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
@@ -119,45 +136,53 @@ public class LogsModel {
             JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        Statement stmt= null;
         try {
-            stmt = db.getConnection().createStatement();
-
-            ResultSet rs=stmt.executeQuery("select * from logs where id = " + logid);
+            ArrayList<String> col = new ArrayList<>();
+            ArrayList<String> val = new ArrayList<>();
+            col.add("id");
+            val.add(Integer.toString(logid));
+            ResultSet rs = dbManager.selectAllWhere("logs", col, val);
             if (!rs.next()){
                 JOptionPane.showMessageDialog(null, "No log with that ID was found", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            String query3 = "select * from changes where logid = " + logid;
-
-            Statement stmt3 = (Statement) db.getConnection().createStatement();
-            ResultSet rs2=stmt3.executeQuery(query3);
+            ArrayList<String> co = new ArrayList<>();
+            ArrayList<String> va = new ArrayList<>();
+            co.add("logid");
+            va.add(Integer.toString(logid));
+            ResultSet rs2= dbManager.selectAllWhere("changes", co, va);
             String created_at = null;
             if (rs2.next()) {
                 created_at = rs2.getString(5);
             }
             String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             String type = "Deletion";
-            String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
-                    + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '" + rs.getString(2)
-                    + "', '" + user.getUsername() + "', '" + rs.getString(3) + "')";
-            Statement stmt2 = (Statement) db.getConnection().createStatement();
-            stmt2.executeUpdate(query2);
-            stmt = (Statement) db.getConnection().createStatement();
-            String query1 = "delete from logs where id = " + logid;
-            stmt.executeUpdate(query1);
+            ArrayList<String> changescol = new ArrayList<>();
+            ArrayList<String> changesval = new ArrayList<>();
+            changescol.add("created_at");
+            changescol.add("last_edited");
+            changescol.add("type");
+            changescol.add("logid");
+            changescol.add("author");
+            changescol.add("editor");
+            changescol.add("body");
+            changesval.add(created_at);
+            changesval.add(last_edited);
+            changesval.add(type);
+            changesval.add(Integer.toString(logid));
+            changesval.add(rs.getString(2));
+            changesval.add(user.getUsername());
+            changesval.add(rs.getString(3));
+            dbManager.insert("changes", changescol, changesval);
+            ArrayList<String> c = new ArrayList<>();
+            ArrayList<String> v = new ArrayList<>();
+            c.add("id");
+            v.add(Integer.toString(logid));
+            dbManager.delete("logs", c, v);
             JOptionPane.showMessageDialog(null, "Successfully deleted log with id: " + logid, Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public DB getDb() {
-        return db;
-    }
-    
-    public void setDB(DB db){
-        this.db = db;
     }
 
     public void createNewLog(){
@@ -172,19 +197,33 @@ public class LogsModel {
             return;
         }
         try {
-            String query4 = "SELECT * from logs where author = '" + author + "' and body = '" + body + "'";
-            Statement stmt4 = (Statement) db.getConnection().createStatement();
-            ResultSet rs4 = stmt4.executeQuery(query4);
+            ArrayList<String> col = new ArrayList<>();
+            ArrayList<String> val = new ArrayList<>();
+            col.add("author");
+            col.add("body");
+            val.add(author);
+            val.add(body);
+            ResultSet rs4 = dbManager.selectAllWhere("logs", col, val);
             if (rs4.next()){
                 JOptionPane.showMessageDialog(null, "A log with exactly identical author and body already exists. Please change.", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            String query1 = "INSERT INTO logs (author, editors, body)" + "VALUES ('" + author + "', '" + "" + "', '" + body + "')";
-            Statement stmt = (Statement) db.getConnection().createStatement();
-            stmt.executeUpdate(query1);
-            String query3 = "select * from logs where author = '" + author + "' and body = '" + body + "'";
-            Statement stmt3 = (Statement) db.getConnection().createStatement();
-            ResultSet rs=stmt3.executeQuery(query3);
+            ArrayList<String> c = new ArrayList<>();
+            ArrayList<String> v = new ArrayList<>();
+            c.add("author");
+            c.add("editors");
+            c.add("body");
+            v.add(author);
+            v.add("");
+            v.add(body);
+            dbManager.insert("logs", c, v);
+            ArrayList<String> co = new ArrayList<>();
+            ArrayList<String> va = new ArrayList<>();
+            co.add("author");
+            co.add("body");
+            va.add(author);
+            va.add(body);
+            ResultSet rs= dbManager.selectAllWhere("logs", co, va);
             if (!rs.next()){
                 JOptionPane.showMessageDialog(null, "No log with that ID was found", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
@@ -193,12 +232,23 @@ public class LogsModel {
             String created_at = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             String type = "Creation";
-            String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
-                    + "VALUES ('" + created_at + "', '" + last_edited + "', '" + type + "', '" + logid + "', '"
-                    + author + "', '" + user.getUsername() + "', '"
-                    + body + "')";
-            Statement stmt2 = (Statement) db.getConnection().createStatement();
-            stmt2.executeUpdate(query2);
+            ArrayList<String> changescol = new ArrayList<>();
+            ArrayList<String> changesval = new ArrayList<>();
+            changescol.add("created_at");
+            changescol.add("last_edited");
+            changescol.add("type");
+            changescol.add("logid");
+            changescol.add("author");
+            changescol.add("editor");
+            changescol.add("body");
+            changesval.add(created_at);
+            changesval.add(last_edited);
+            changesval.add(type);
+            changesval.add(Integer.toString(logid));
+            changesval.add(rs.getString(2));
+            changesval.add(user.getUsername());
+            changesval.add(rs.getString(3));
+            dbManager.insert("changes", changescol, changesval);
             JOptionPane.showMessageDialog(null, "Inserted New Log Into Database Successfully!");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -208,26 +258,28 @@ public class LogsModel {
 
     public ResultSet filterLogs(){
         String filterby = JOptionPane.showInputDialog(null, "Filter by author or body", Env.LogsMessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
-        try {
             if (filterby != null){
                 if (filterby.trim().equalsIgnoreCase("author")){
                     String keyword = JOptionPane.showInputDialog(null, "Enter filter keywords for author", Env.LogsMessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
-                    Statement stmt = db.getConnection().createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT * from logs where author = '" + keyword + "'");
+                    ArrayList<String> col = new ArrayList<>();
+                    ArrayList<String> val = new ArrayList<>();
+                    col.add("author");
+                    val.add(keyword);
+                    ResultSet rs = dbManager.selectAllWhere("logs", col, val);
                     return rs;
                 }else if (filterby.trim().equalsIgnoreCase("body")){
                     String keyword = JOptionPane.showInputDialog(null, "Enter filter keywords for author", Env.LogsMessageBoxTitle, JOptionPane.QUESTION_MESSAGE);
-                    Statement stmt = db.getConnection().createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT * from logs where body = '" + keyword + "'");
+                    ArrayList<String> col = new ArrayList<>();
+                    ArrayList<String> val = new ArrayList<>();
+                    col.add("body");
+                    val.add(keyword);
+                    ResultSet rs = dbManager.selectAllWhere("logs", col, val);
                     return rs;
                 }else{
                     JOptionPane.showMessageDialog(null, "You can only filter by author or body. Nothing else at the moment.", Env.LogsMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
                     return null;
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         return null;
     }
 
@@ -260,56 +312,44 @@ public class LogsModel {
     }
 
     public ResultSet getLogHistory(){
-        Statement stmt= null;
-        try {
-            stmt = db.getConnection().createStatement();
-
-            ResultSet rs=stmt.executeQuery("select * from changes");
-            return rs;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        ResultSet rs = dbManager.selectAll("changes");
+        return rs;
     }
 
     public void deleteAllLogHistory(){
-        Statement stmt= null;
-        try {
-            stmt = db.getConnection().createStatement();
-
-            int deletedRows =stmt.executeUpdate("DELETE from changes");
+            int deletedRows = dbManager.deleteAll("changes");
             if(deletedRows>0){
                 JOptionPane.showMessageDialog(null, "Successfully deleted all log changes history", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
             }else{
                 JOptionPane.showMessageDialog(null, "There are no log changes history to delete", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     public void deleteAllLogs(){
-        Statement stmt= null;
-        try {
-            stmt = db.getConnection().createStatement();
-
-            int deletedRows =stmt.executeUpdate("DELETE from logs");
+            int deletedRows = dbManager.deleteAll("logs");
             if(deletedRows>0){
                 String last_edited = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
                 String type = "Deletion of all logs";
-                String query2 = "INSERT INTO changes (created_at, last_edited, type, logid, author, editor, body)"
-                        + "VALUES ('" + "" + "', '" + last_edited + "', '" + type + "', '" + "404" + "', '" + ""
-                        + "', '" + user.getUsername() + "', '" + "" + "')";
-                Statement stmt2 = (Statement) db.getConnection().createStatement();
-                stmt2.executeUpdate(query2);
+                ArrayList<String> changescol = new ArrayList<>();
+                ArrayList<String> changesval = new ArrayList<>();
+                changescol.add("created_at");
+                changescol.add("last_edited");
+                changescol.add("type");
+                changescol.add("logid");
+                changescol.add("author");
+                changescol.add("editor");
+                changescol.add("body");
+                changesval.add("");
+                changesval.add(last_edited);
+                changesval.add(type);
+                changesval.add("404");
+                changesval.add("");
+                changesval.add(user.getUsername());
+                changesval.add("");
+                dbManager.insert("changes", changescol, changesval);
                 JOptionPane.showMessageDialog(null, "Successfully deleted all logs", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
             }else{
                 JOptionPane.showMessageDialog(null, "There are no logs to delete", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 }
