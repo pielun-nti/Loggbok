@@ -4,10 +4,7 @@ import config.Env;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -22,6 +19,62 @@ public class LogsModel {
         dbManager = new DBManager();
         this.user = user;
     }
+
+
+    public boolean saveLogsToDataFile(String path, String data){
+        DataOutputStream out = null;
+        try {
+            out = new DataOutputStream(new FileOutputStream(path));
+            out.writeUTF(data);
+            out.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public String readLogsFromDataFile(String path){
+        DataInputStream in = null;
+        try {
+            in = new DataInputStream(new BufferedInputStream(new FileInputStream(path)));
+            return in.readUTF();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String openFileDialog(){
+        final JFileChooser openFileChooser = new JFileChooser();
+        openFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        openFileChooser.setApproveButtonText("Open Log");
+        openFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Data File", "dat"));
+        openFileChooser.setFileFilter(new FileNameExtensionFilter("Txt file", "txt"));
+        int actionDialog = openFileChooser.showOpenDialog(null);
+        if (actionDialog != JFileChooser.APPROVE_OPTION) {
+            return null;
+        }
+        File file = openFileChooser.getSelectedFile();
+        if (!file.getName().endsWith(".txt") & (!file.getName().endsWith("dat"))) {
+            file = new File(file.getAbsolutePath() + ".dat");
+        }
+        if (file.getName().endsWith(".dat")){
+            String data = readLogsFromDataFile(file.getAbsolutePath());
+            if (data == null) {
+                JOptionPane.showMessageDialog(null, "Error reading logs data from file: " + file.getAbsolutePath(), Env.LogsMessageBoxTitle, JOptionPane.WARNING_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(null, "Opened log data successfully!", Env.LogsMessageBoxTitle, JOptionPane.WARNING_MESSAGE);
+                return data;
+            }
+        }
+        return null;
+    }
+
     public ResultSet getAllLogs(){
         ResultSet rs = dbManager.selectAll("logs");
         if (rs != null) {
@@ -285,29 +338,22 @@ public class LogsModel {
 
     public void saveFileDialog(String textToSave) {
         final JFileChooser saveAsFileChooser = new JFileChooser();
-        saveAsFileChooser.setApproveButtonText("Save");
+        saveAsFileChooser.setApproveButtonText("Save Log");
+        saveAsFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Data File", "dat"));
         saveAsFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Text File", "txt"));
-        saveAsFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("HyperText Markup Language", "html"));
         int actionDialog = saveAsFileChooser.showOpenDialog(null);
         if (actionDialog != JFileChooser.APPROVE_OPTION) {
             return;
         }
         File file = saveAsFileChooser.getSelectedFile();
-        if (!file.getName().endsWith(".html") & (!file.getName().endsWith(".txt"))) {
-            file = new File(file.getAbsolutePath() + ".txt");
+        if (!file.getName().endsWith(".dat") & (!file.getName().endsWith(".txt"))) {
+            file = new File(file.getAbsolutePath() + ".dat");
         }
-        BufferedWriter outFile = null;
-        try {
-            outFile = new BufferedWriter(new FileWriter(file));
-            outFile.write(textToSave);
-        } catch (Exception ex) {
+        boolean saved = saveLogsToDataFile(file.getAbsolutePath(), textToSave);
+        if (!saved) {
             JOptionPane.showMessageDialog(null, "Error writing to saved file", Env.LogsMessageBoxTitle, JOptionPane.WARNING_MESSAGE);
-        } finally {
-            if (outFile != null) {
-                try {
-                    outFile.close();
-                } catch (IOException e) {}
-            }
+        }else{
+            JOptionPane.showMessageDialog(null, "Saved log to file", Env.LogsMessageBoxTitle, JOptionPane.WARNING_MESSAGE);
         }
     }
 

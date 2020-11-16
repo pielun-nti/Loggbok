@@ -96,8 +96,11 @@ public class LogsController{
                 if (command.equalsIgnoreCase("Filter logs")){
                     filterLogs();
                 }
-                if (command.equalsIgnoreCase("Save as")){
+                if (command.equalsIgnoreCase("Save logs as")){
                     saveFileDialog();
+                }
+                if (command.equalsIgnoreCase("Open logs")){
+                    openFileDialog();
                 }
                 if (command.equalsIgnoreCase("Logout")){
                     Logout();
@@ -146,6 +149,13 @@ public class LogsController{
                 }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    void openFileDialog(){
+        String data = model.openFileDialog();
+        if (data != null) {
+            view.setLogsTXT(data);
         }
     }
 

@@ -23,6 +23,7 @@ public class LogsView extends javax.swing.JFrame {
     JMenuItem menuItemDeleteAllLogs;
     JMenuItem menuItemDeleteLogHistory;
     JMenuItem menuItemSaveAs;
+    JMenuItem menuItemOpen;
     JMenuItem menuItemLogout;
     JMenuItem menuItemExit;
     JMenuItem menuItemFilterLogs;
@@ -62,6 +63,7 @@ public class LogsView extends javax.swing.JFrame {
         menuItemDeleteAllLogs.setFont(mainFont);
         menuItemDeleteLogHistory.setFont(mainFont);
         menuItemSaveAs.setFont(mainFont);
+        menuItemOpen.setFont(mainFont);
         menuItemExit.setFont(mainFont);
         menuItemChangeFontSize.setFont(mainFont);
         menuItemAbout.setFont(mainFont);
@@ -78,6 +80,7 @@ public class LogsView extends javax.swing.JFrame {
         menuItemSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menuItemLogout.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
         menuItemFilterLogs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
     }
 
     void initComponents() {
@@ -92,7 +95,8 @@ public class LogsView extends javax.swing.JFrame {
         scroll = new JScrollPane(txtLogs,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         menuItemExit = new JMenuItem("Exit application");
-        menuItemSaveAs = new JMenuItem("Save As");
+        menuItemSaveAs = new JMenuItem("Save Logs As");
+        menuItemOpen = new JMenuItem("Open Logs");
         menuItemDeleteAllLogs = new JMenuItem("Delete All Logs");
         menuItemDeleteLogHistory = new JMenuItem("Delete All Logs Changes History");
         menuItemDeleteLog = new JMenuItem("Delete Log");
@@ -116,6 +120,7 @@ public class LogsView extends javax.swing.JFrame {
         fileMenu.add(menuItemDeleteLogHistory);
         fileMenu.add(menuItemFilterLogs);
         fileMenu.add(menuItemSaveAs);
+        fileMenu.add(menuItemOpen);
         fileMenu.add(menuItemLogout);
         fileMenu.add(menuItemExit);
         editMenu.add(menuItemChangeFontSize);
@@ -324,6 +329,7 @@ public class LogsView extends javax.swing.JFrame {
         menuItemDeleteLogHistory.addActionListener(listener);
         menuItemFilterLogs.addActionListener(listener);
         menuItemSaveAs.addActionListener(listener);
+        menuItemOpen.addActionListener(listener);
         menuItemLogout.addActionListener(listener);
         menuItemExit.addActionListener(listener);
         menuItemChangeFontSize.addActionListener(listener);
