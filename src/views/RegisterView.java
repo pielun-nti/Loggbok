@@ -9,7 +9,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowListener;
 
 public class RegisterView extends javax.swing.JFrame {
-    JFrame frame;
     JMenuBar menuBar;
     JMenu helpMenu;
     JMenuItem menuItemLogin;
@@ -30,12 +29,12 @@ public class RegisterView extends javax.swing.JFrame {
         initKeystrokes();
         addComponents();
         Dimension res = new Dimension(1200, 800);
-        frame.setPreferredSize(res);
-        frame.setSize(res);
-        frame.setContentPane(mainPanel);
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
-        frame.pack();
+        setPreferredSize(res);
+        setSize(res);
+        setContentPane(mainPanel);
+        setResizable(false);
+        setLocationRelativeTo(null);
+        pack();
     }
 
     void setLocation(){
@@ -61,7 +60,7 @@ public class RegisterView extends javax.swing.JFrame {
     }
 
     void setFonts(){
-        frame.setFont(mainFont);
+        setFont(mainFont);
         helpMenu.setFont(mainFont);
         menuBar.setFont(mainFont);
         menuItemLogin.setFont(mainFont);
@@ -74,7 +73,7 @@ public class RegisterView extends javax.swing.JFrame {
     }
 
     void initComponents(){
-        frame = new JFrame("Register");
+        setTitle("Register");
         mainPanel = new JPanel();
         menuBar = new JMenuBar();
         helpMenu = new JMenu("Register");
@@ -92,7 +91,7 @@ public class RegisterView extends javax.swing.JFrame {
         helpMenu.add(menuItemLogin);
         helpMenu.add(menuItemAnonymous);
         menuBar.add(helpMenu);
-        frame.setJMenuBar(menuBar);
+        setJMenuBar(menuBar);
         mainPanel.setLayout(null);
         txtPassword.setEchoChar('*');
         mainPanel.add(txtUsername);
@@ -102,13 +101,6 @@ public class RegisterView extends javax.swing.JFrame {
         mainPanel.add(btnRegister);
     }
 
-    public JFrame getFrame() {
-        return frame;
-    }
-
-    public void setFrame(JFrame frame) {
-        this.frame = frame;
-    }
 
     public void setMenuBar(JMenuBar menuBar) {
         this.menuBar = menuBar;
@@ -214,7 +206,7 @@ public class RegisterView extends javax.swing.JFrame {
     }
 
     public void addFrameWindowListener(WindowListener listener){
-        frame.addWindowListener(listener);
+        addWindowListener(listener);
     }
 
     public void displayErrorMsg(String msg) {

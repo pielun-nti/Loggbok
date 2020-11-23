@@ -35,7 +35,7 @@ public class LogsController{
 
         @Override
         public void windowClosing(WindowEvent windowEvent) {
-                    view.getFrame().dispose();
+                    view.dispose();
             }
 
         @Override
@@ -106,7 +106,7 @@ public class LogsController{
                     Logout();
                 }
                 if (command.equalsIgnoreCase("Exit application")){
-                    view.getFrame().dispose();
+                    view.dispose();
                 }
                 if (command.equalsIgnoreCase("Change font size")){
                     int fontSize = view.getFontSize();
@@ -119,7 +119,7 @@ public class LogsController{
                     Font mainFont = new Font("Verdana", Font.BOLD, fontSize);
                     view.setMainFont(mainFont);
                     view.getTxtLogs().setFont(mainFont);
-                    view.getFrame().setFont(mainFont);
+                    view.setFont(mainFont);
                 }
                 if (command.equalsIgnoreCase("About")){
                     JOptionPane.showMessageDialog(null, "Made by Pierre Lundström", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
@@ -132,9 +132,9 @@ public class LogsController{
             LoginView loginView = new LoginView();
             LoginModel loginModel = new LoginModel();
             LoginController loginController = new LoginController(loginView, loginModel);
-            loginView.getFrame().setVisible(true);
+            loginView.setVisible(true);
             loginView.getTxtUsername().requestFocus();
-        view.getFrame().dispose();
+            view.dispose();
         }
 
     void getAllLogs(){

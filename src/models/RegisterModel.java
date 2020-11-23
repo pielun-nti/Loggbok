@@ -51,7 +51,7 @@ public class RegisterModel {
             LogsView logsView = new LogsView(user);
             LogsModel logsModel = new LogsModel(user);
             LogsController logsController = new LogsController(logsView, logsModel, user);
-            logsView.getFrame().setVisible(true);
+            logsView.setVisible(true);
             return true;
     }
 }

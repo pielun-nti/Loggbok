@@ -72,7 +72,7 @@ public class RegisterController {
 
         @Override
         public void windowClosing(WindowEvent windowEvent) {
-            view.getFrame().dispose();
+            view.dispose();
         }
 
         @Override
@@ -131,7 +131,7 @@ public class RegisterController {
             view.getTxtUsername().requestFocus();
             return;
         }else{
-            view.getFrame().dispose();
+            view.dispose();
         }
     }
 
@@ -139,9 +139,9 @@ public class RegisterController {
         LoginView loginView = new LoginView();
         LoginModel loginModel = new LoginModel();
         LoginController loginController = new LoginController(loginView, loginModel);
-        loginView.getFrame().setVisible(true);
+        loginView.setVisible(true);
         loginView.getTxtUsername().requestFocus();
-        view.getFrame().dispose();
+        view.dispose();
     }
 
     public void loginAsAnonymous(){
@@ -149,7 +149,7 @@ public class RegisterController {
         LogsView logsView = new LogsView(user);
         LogsModel logsModel = new LogsModel(user);
         LogsController logsController = new LogsController(logsView, logsModel, user);
-        logsView.getFrame().setVisible(true);
-        view.getFrame().dispose();
+        logsView.setVisible(true);
+        view.dispose();
     }
 }

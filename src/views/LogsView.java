@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class LogsView extends javax.swing.JFrame {
-    JFrame frame;
     JMenuBar menuBar;
     JMenu fileMenu;
     JMenu editMenu;
@@ -41,15 +40,15 @@ public class LogsView extends javax.swing.JFrame {
         initKeystrokes();
         addComponents();
         Dimension res = new Dimension(1200, 800);
-        frame.setPreferredSize(res);
-        frame.setSize(res);
+        setPreferredSize(res);
+        setSize(res);
         txtLogs.setEditable(true);
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
-        frame.pack();
+        setResizable(false);
+        setLocationRelativeTo(null);
+        pack();
     }
     void setFonts(){
-        frame.setFont(mainFont);
+        setFont(mainFont);
         txtLogs.setFont(mainFont);
         menuBar.setFont(mainFont);
         fileMenu.setFont(mainFont);
@@ -84,7 +83,7 @@ public class LogsView extends javax.swing.JFrame {
     }
 
     void initComponents() {
-        frame = new JFrame("LogsManager - logged in as: " + user.getUsername());
+        setTitle("LogsManager - logged in as: " + user.getUsername());
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
         editMenu = new JMenu("Edit");
@@ -129,16 +128,8 @@ public class LogsView extends javax.swing.JFrame {
         menuBar.add(editMenu);
         //menuBar.add(settingsMenu);
         menuBar.add(aboutMenu);
-        frame.setJMenuBar(menuBar);
-        frame.add(scroll);
-    }
-
-    public JFrame getFrame() {
-        return frame;
-    }
-
-    public void setFrame(JFrame frame) {
-        this.frame = frame;
+        setJMenuBar(menuBar);
+        add(scroll);
     }
 
 
@@ -337,7 +328,7 @@ public class LogsView extends javax.swing.JFrame {
     }
 
     public void addFrameWindowListener(WindowListener listener){
-        frame.addWindowListener(listener);
+        addWindowListener(listener);
     }
 
     public String getLogsTXT(){

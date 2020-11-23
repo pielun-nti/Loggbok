@@ -12,7 +12,6 @@ import java.awt.event.WindowListener;
 
 public class LoginView extends javax.swing.JFrame {
 
-    JFrame frame;
     JMenuBar menuBar;
     JMenu helpMenu;
     JMenuItem menuItemRegister;
@@ -34,12 +33,12 @@ public class LoginView extends javax.swing.JFrame {
         initKeystrokes();
         addComponents();
         Dimension res = new Dimension(1200, 800);
-        frame.setPreferredSize(res);
-        frame.setSize(res);
-        frame.setContentPane(mainPanel);
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
-        frame.pack();
+        setPreferredSize(res);
+        setSize(res);
+        setContentPane(mainPanel);
+        setResizable(false);
+        setLocationRelativeTo(null);
+        pack();
     }
 
     void initKeystrokes(){
@@ -47,7 +46,7 @@ public class LoginView extends javax.swing.JFrame {
     }
 
     void setFonts(){
-        frame.setFont(mainFont);
+        setFont(mainFont);
         menuBar.setFont(mainFont);
         helpMenu.setFont(mainFont);
         menuItemRegister.setFont(mainFont);
@@ -78,7 +77,7 @@ public class LoginView extends javax.swing.JFrame {
     }
 
     void initComponents(){
-        frame = new JFrame("Login");
+        setTitle("Login");
         mainPanel = new JPanel();
         menuBar = new JMenuBar();
         helpMenu = new JMenu("Help");
@@ -96,7 +95,7 @@ public class LoginView extends javax.swing.JFrame {
         helpMenu.add(menuItemRegister);
         helpMenu.add(menuItemAnonymous);
         menuBar.add(helpMenu);
-        frame.setJMenuBar(menuBar);
+        setJMenuBar(menuBar);
         mainPanel.setLayout(null);
         txtPassword.setEchoChar('*');
         mainPanel.add(txtUsername);
@@ -104,14 +103,6 @@ public class LoginView extends javax.swing.JFrame {
         mainPanel.add(labelUsername);
         mainPanel.add(labelPassword);
         mainPanel.add(btnLogin);
-    }
-
-    public JFrame getFrame() {
-        return frame;
-    }
-
-    public void setFrame(JFrame frame) {
-        this.frame = frame;
     }
 
     public void setMenuBar(JMenuBar menuBar) {
@@ -218,7 +209,7 @@ public class LoginView extends javax.swing.JFrame {
     }
 
     public void addFrameWindowListener(WindowListener listener){
-        frame.addWindowListener(listener);
+        addWindowListener(listener);
     }
 
     public void displayErrorMsg(String msg) {
