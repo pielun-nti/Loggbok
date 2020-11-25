@@ -148,7 +148,7 @@ public class LoginController {
     
     public void Login(){
         String username = view.getTxtUsername().getText().trim();
-        String password = view.getTxtPassword().getText().trim();
+        String password = new String(view.getTxtPassword().getPassword());
         if (!model.Login(username, password)){
                 view.getTxtUsername().setText("");
                 view.getTxtPassword().setText("");

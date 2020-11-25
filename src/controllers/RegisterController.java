@@ -124,7 +124,7 @@ public class RegisterController {
 
     public void Register(){
         String username = view.getTxtUsername().getText().trim();
-        String password = view.getTxtPassword().getText().trim();
+        String password = new String(view.getTxtPassword().getPassword());
         if (!model.Register(username, password)){
             view.getTxtUsername().setText("");
             view.getTxtPassword().setText("");

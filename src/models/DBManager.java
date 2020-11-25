@@ -14,7 +14,7 @@ public class DBManager {
         db = new DB();
         if (!db.initDB()){
             JOptionPane.showMessageDialog(null, "Init DB Error!", Env.DBMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
-            return;
+            System.exit(2);
         }
     }
 
@@ -23,7 +23,7 @@ public class DBManager {
         if (db.getConnection() == null) {
             if (!db.initDB()) {
                 JOptionPane.showMessageDialog(null, "Init DB Error!", Env.DBMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
-                return;
+                System.exit(2);
             }
         }
     }
