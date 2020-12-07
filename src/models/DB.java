@@ -76,12 +76,18 @@ public class DB {
                         + "LAST_EDITED varchar(255) DEFAULT NULL,"
                         + "TYPE varchar(255) DEFAULT NULL,"
                         + "EDITOR varchar(255) DEFAULT NULL)";
+                String create_editing_table="CREATE TABLE editing ("
+                        + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+                        + "LOGID int unsigned NOT NULL,"
+                        + "EDITOR varchar(255) DEFAULT NULL)";
                 s = connection.createStatement();
                 s.executeUpdate(create_logs_table);
                 s = connection.createStatement();
                 s.executeUpdate(create_changes_table);
                 s = connection.createStatement();
                 s.executeUpdate(create_users_table);
+                s = connection.createStatement();
+                s.executeUpdate(create_editing_table);
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 success = false;

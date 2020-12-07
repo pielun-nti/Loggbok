@@ -85,26 +85,57 @@ public class LogsModel {
     public void editLog(){
         int logid = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter ID of the log you want to edit", Env.LogsMessageBoxTitle, JOptionPane.QUESTION_MESSAGE));
         if (logid < 0){
-            JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "ID Must be greater or equal to 0", Env.LogsMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
             return;
         }
         try {
+            ArrayList<String> co = new ArrayList<>();
+            ArrayList<String> va = new ArrayList<>();
+            co.add("logid");
+            va.add(Integer.toString(logid));
+            ResultSet resultSet = dbManager.selectAllWhere("editing", co, va);
+            if (resultSet.next()){
+                JOptionPane.showMessageDialog(null, "Log with ID " + logid + " is already being edited by " + resultSet.getString(3), Env.LogsMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            ArrayList<String> colu = new ArrayList<>();
+            ArrayList<String> valu = new ArrayList<>();
+            colu.add("logid");
+            colu.add("editor");
+            valu.add(Integer.toString(logid));
+            valu.add(user.getUsername());
+            dbManager.insert("editing", colu, valu);
             ArrayList<String> columns = new ArrayList<>();
             ArrayList<String> values = new ArrayList<>();
             columns.add("id");
             values.add(Integer.toString(logid));
             ResultSet rs = dbManager.selectAllWhere("logs", columns, values);
             if (!rs.next()){
+                ArrayList<String> colo = new ArrayList<>();
+                ArrayList<String> valo = new ArrayList<>();
+                colo.add("logid");
+                valo.add(Integer.toString(logid));
+                dbManager.delete("editing", colo, valo);
                 JOptionPane.showMessageDialog(null, "No log with that ID was found", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
             String logbody = (String) JOptionPane.showInputDialog(null, "Edit body for log id: " + logid, Env.LogsMessageBoxTitle, JOptionPane.QUESTION_MESSAGE, null, null, rs.getString(3));
             if (logbody == null){
+                ArrayList<String> colo = new ArrayList<>();
+                ArrayList<String> valo = new ArrayList<>();
+                colo.add("logid");
+                valo.add(Integer.toString(logid));
+                dbManager.delete("editing", colo, valo);
                 JOptionPane.showMessageDialog(null, "Body cannot be null.", Env.LogsMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
                 return;
             }
             if (logbody.trim().equals("")){
                 JOptionPane.showMessageDialog(null, "Body must have an value.", Env.LogsMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                ArrayList<String> colo = new ArrayList<>();
+                ArrayList<String> valo = new ArrayList<>();
+                colo.add("logid");
+                valo.add(Integer.toString(logid));
+                dbManager.delete("editing", colo, valo);
                 return;
             }
             ArrayList<String> col = new ArrayList<>();
@@ -115,6 +146,11 @@ public class LogsModel {
             val.add(logbody);
             ResultSet rs4 = dbManager.selectAllWhere("logs", col, val);
             if (rs4.next()){
+                ArrayList<String> colo = new ArrayList<>();
+                ArrayList<String> valo = new ArrayList<>();
+                colo.add("logid");
+                valo.add(Integer.toString(logid));
+                dbManager.delete("editing", colo, valo);
                 JOptionPane.showMessageDialog(null, "A log with exactly identical author and body already exists. Please change.", Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
@@ -152,7 +188,12 @@ public class LogsModel {
                 filtercol2.add("id");
                 filterval2.add(Integer.toString(logid));
                 dbManager.edit("logs", filtercol2, filterval2, setcol2, setval2);
-                ResultSet rs2= dbManager.selectAllWhere("changes", c, v);
+                ArrayList<String> colo = new ArrayList<>();
+                ArrayList<String> valo = new ArrayList<>();
+                colo.add("logid");
+                valo.add(Integer.toString(logid));
+                dbManager.delete("editing", colo, valo);
+                ResultSet rs2= dbManager.selectAllWhere("editing", c, v);
                 String created_at = null;
                 if (rs2.next()) {
                     created_at = rs2.getString(5);
@@ -180,6 +221,11 @@ public class LogsModel {
             JOptionPane.showMessageDialog(null, "Successfully updated author and body for log id: " + logid, Env.LogsMessageBoxTitle, JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
             e.printStackTrace();
+            ArrayList<String> colo = new ArrayList<>();
+            ArrayList<String> valo = new ArrayList<>();
+            colo.add("logid");
+            valo.add(Integer.toString(logid));
+            dbManager.delete("editing", colo, valo);
         }
     }
 
