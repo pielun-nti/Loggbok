@@ -18,6 +18,8 @@ public class SecurityView extends javax.swing.JFrame {
     JMenuItem menuItemGetLoginLogs;
     JMenuItem menuItemClearLogs;
     JPanel mainPanel;
+    JScrollPane scroll;
+    JTextArea txtSecLogs;
     private Font mainFont;
     int fontSize = 18;
     User user;
@@ -47,6 +49,7 @@ public class SecurityView extends javax.swing.JFrame {
         helpMenu.setFont(mainFont);
         menuItemGetLoginLogs.setFont(mainFont);
         menuItemClearLogs.setFont(mainFont);
+        txtSecLogs.setFont(mainFont);
     }
 
     void initComponents(){
@@ -57,6 +60,9 @@ public class SecurityView extends javax.swing.JFrame {
         mainFont = new Font("Verdana", Font.BOLD, fontSize);
         menuItemGetLoginLogs = new JMenuItem("Get Login Logs");
         menuItemClearLogs = new JMenuItem("Clear Login Logs");
+        txtSecLogs = new JTextArea();
+        scroll = new JScrollPane(txtSecLogs,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     }
 
     void addComponents() {
@@ -65,6 +71,7 @@ public class SecurityView extends javax.swing.JFrame {
         menuBar.add(helpMenu);
         setJMenuBar(menuBar);
         mainPanel.setLayout(null);
+        mainPanel.add(scroll);
     }
 
     public void addListeners(ActionListener listener){
@@ -74,6 +81,90 @@ public class SecurityView extends javax.swing.JFrame {
 
     public void addFrameWindowListener(WindowListener listener){
         addWindowListener(listener);
+    }
+
+    public void setMenuBar(JMenuBar menuBar) {
+        this.menuBar = menuBar;
+    }
+
+    public JMenu getHelpMenu() {
+        return helpMenu;
+    }
+
+    public void setHelpMenu(JMenu helpMenu) {
+        this.helpMenu = helpMenu;
+    }
+
+    public JMenuItem getMenuItemGetLoginLogs() {
+        return menuItemGetLoginLogs;
+    }
+
+    public void setMenuItemGetLoginLogs(JMenuItem menuItemGetLoginLogs) {
+        this.menuItemGetLoginLogs = menuItemGetLoginLogs;
+    }
+
+    public JMenuItem getMenuItemClearLogs() {
+        return menuItemClearLogs;
+    }
+
+    public void setMenuItemClearLogs(JMenuItem menuItemClearLogs) {
+        this.menuItemClearLogs = menuItemClearLogs;
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
+
+    public void setMainPanel(JPanel mainPanel) {
+        this.mainPanel = mainPanel;
+    }
+
+    public JScrollPane getScroll() {
+        return scroll;
+    }
+
+    public void setScroll(JScrollPane scroll) {
+        this.scroll = scroll;
+    }
+
+    public JTextArea getTxtSecLogs() {
+        return txtSecLogs;
+    }
+
+    public void setTxtSecLogs(JTextArea txtSecLogs) {
+        this.txtSecLogs = txtSecLogs;
+    }
+
+    public Font getMainFont() {
+        return mainFont;
+    }
+
+    public void setMainFont(Font mainFont) {
+        this.mainFont = mainFont;
+    }
+
+    public int getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(int fontSize) {
+        this.fontSize = fontSize;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getSecLogsTXT(){
+        return txtSecLogs.getText();
+    }
+
+    public void appendSecLogsTXT(String text){
+        txtSecLogs.append(text);
     }
 
     public void displayErrorMsg(String msg) {
