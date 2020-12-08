@@ -80,6 +80,11 @@ public class DB {
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "LOGID int unsigned NOT NULL,"
                         + "EDITOR varchar(255) DEFAULT NULL)";
+                String create_logins_table ="CREATE TABLE logins ("
+                        + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+                        + "USERNAME varchar(255) DEFAULT NULL,"
+                        + "ADMIN varchar(255) DEFAULT NULL,"
+                        + "DATE_TIME varchar(255) DEFAULT NULL)";
                 s = connection.createStatement();
                 s.executeUpdate(create_logs_table);
                 s = connection.createStatement();
@@ -88,6 +93,8 @@ public class DB {
                 s.executeUpdate(create_users_table);
                 s = connection.createStatement();
                 s.executeUpdate(create_editing_table);
+                s = connection.createStatement();
+                s.executeUpdate(create_logins_table);
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 success = false;
