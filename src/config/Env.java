@@ -10,4 +10,5 @@ public class Env {
     public static String LoginMessageBoxTitle = "Login GUI";
     public static String RegisterMessageBoxTitle = "Register GUI";
     public static String DBMessageBoxTitle = "DBManager GUI";
+    public static String SecurityMessageBoxTitle = "Security GUI";
 }
