@@ -23,6 +23,7 @@ public class LogsView extends javax.swing.JFrame {
     JMenuItem menuItemDeleteLogHistory;
     JMenuItem menuItemSaveAs;
     JMenuItem menuItemOpen;
+    JMenuItem menuItemOpenSecurity;
     JMenuItem menuItemLogout;
     JMenuItem menuItemExit;
     JMenuItem menuItemFilterLogs;
@@ -67,6 +68,7 @@ public class LogsView extends javax.swing.JFrame {
         menuItemChangeFontSize.setFont(mainFont);
         menuItemAbout.setFont(mainFont);
         menuItemLogout.setFont(mainFont);
+        menuItemOpenSecurity.setFont(mainFont);
         menuItemFilterLogs.setFont(mainFont);
     }
 
@@ -106,6 +108,7 @@ public class LogsView extends javax.swing.JFrame {
         menuItemShowLogHistory = new JMenuItem("Get Logs Changes History");
         menuItemAbout = new JMenuItem("About");
         menuItemLogout = new JMenuItem("Logout");
+        menuItemOpenSecurity = new JMenuItem("Open Security");
         menuItemFilterLogs = new JMenuItem("Filter Logs");
     }
 
@@ -121,6 +124,7 @@ public class LogsView extends javax.swing.JFrame {
         fileMenu.add(menuItemSaveAs);
         fileMenu.add(menuItemOpen);
         fileMenu.add(menuItemLogout);
+        fileMenu.add(menuItemOpenSecurity);
         fileMenu.add(menuItemExit);
         editMenu.add(menuItemChangeFontSize);
         aboutMenu.add(menuItemAbout);
@@ -285,6 +289,30 @@ public class LogsView extends javax.swing.JFrame {
         return menuItemAbout;
     }
 
+    public JMenuItem getMenuItemOpen() {
+        return menuItemOpen;
+    }
+
+    public void setMenuItemOpen(JMenuItem menuItemOpen) {
+        this.menuItemOpen = menuItemOpen;
+    }
+
+    public JMenuItem getMenuItemOpenSecurity() {
+        return menuItemOpenSecurity;
+    }
+
+    public void setMenuItemOpenSecurity(JMenuItem menuItemOpenSecurity) {
+        this.menuItemOpenSecurity = menuItemOpenSecurity;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public void setMenuItemAbout(JMenuItem menuItemAbout) {
         this.menuItemAbout = menuItemAbout;
     }
@@ -322,6 +350,7 @@ public class LogsView extends javax.swing.JFrame {
         menuItemSaveAs.addActionListener(listener);
         menuItemOpen.addActionListener(listener);
         menuItemLogout.addActionListener(listener);
+        menuItemOpenSecurity.addActionListener(listener);
         menuItemExit.addActionListener(listener);
         menuItemChangeFontSize.addActionListener(listener);
         menuItemAbout.addActionListener(listener);

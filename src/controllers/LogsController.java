@@ -4,13 +4,16 @@ import config.Env;
 import core.*;
 import models.LoginModel;
 import models.LogsModel;
+import models.SecurityModel;
 import models.User;
 import views.LoginView;
 import views.LogsView;
+import views.SecurityView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.security.Security;
 import java.sql.*;
 
 public class LogsController{
@@ -105,6 +108,9 @@ public class LogsController{
                 if (command.equalsIgnoreCase("Logout")){
                     Logout();
                 }
+                if (command.equalsIgnoreCase("Open Security")){
+                    openSecurity();
+                }
                 if (command.equalsIgnoreCase("Exit application")){
                     view.dispose();
                 }
@@ -136,6 +142,14 @@ public class LogsController{
             loginView.getTxtUsername().requestFocus();
             view.dispose();
         }
+
+    void openSecurity(){
+        SecurityView securityView = new SecurityView(user);
+        SecurityModel securityModel = new SecurityModel();
+        SecurityController securityController = new SecurityController(securityView, securityModel);
+        securityView.setVisible(true);
+        view.dispose();
+    }
 
     void getAllLogs(){
         try {
