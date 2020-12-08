@@ -4,16 +4,22 @@ import config.Env;
 
 import javax.swing.*;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class SecurityModel {
     DBManager dbManager;
     User user;
-    public SecurityModel(){
+    public SecurityModel(User user){
+        this.user = user;
         dbManager = new DBManager();
     }
 
     public ResultSet getLoginLogs(){
-        ResultSet rs = dbManager.selectAll("logins");
+        ArrayList<String> co = new ArrayList<>();
+        ArrayList<String> va = new ArrayList<>();
+        co.add("username");
+        va.add(user.getUsername());
+        ResultSet rs = dbManager.selectAllWhere("logins", co, va);
         if (rs != null) {
             return rs;
         }
