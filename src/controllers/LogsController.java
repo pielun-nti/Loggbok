@@ -145,7 +145,7 @@ public class LogsController{
 
     void openSecurity(){
         SecurityView securityView = new SecurityView(user);
-        SecurityModel securityModel = new SecurityModel();
+        SecurityModel securityModel = new SecurityModel(user);
         SecurityController securityController = new SecurityController(securityView, securityModel);
         securityView.setVisible(true);
         view.dispose();

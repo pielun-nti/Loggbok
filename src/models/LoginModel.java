@@ -50,8 +50,11 @@ public class LoginModel {
             LogsModel logsModel = new LogsModel(user);
             LogsController logsController = new LogsController(logsView, logsModel, user);
             logsView.setVisible(true);
+            val.add("TRUE");
+            dbManager.insert("logins", col, val);
             return true;
         } catch (SQLException e) {
+            dbManager.insert("logins", col, val);
             e.printStackTrace();
         }
         return false;
