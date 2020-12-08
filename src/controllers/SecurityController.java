@@ -90,9 +90,9 @@ public class SecurityController {
             view.setSecLogsTXT("");
             while(rs.next())
                 if (view.getSecLogsTXT().trim().equals("")) {
-                    view.setSecLogsTXT("ID: " + rs.getString(1) + "\r\nUsername: " + rs.getString(2) + "\r\nAdmin: " + rs.getString(3) + "\r\nDate & time: " + rs.getString(4));
+                    view.setSecLogsTXT("ID: " + rs.getString(1) + "\r\nUsername: " + rs.getString(2) + "\r\nAdmin: " + rs.getString(3) + "\r\nSuccess: " + rs.getString(4) + "\r\nDate & time: " + rs.getString(5));
                 }else{
-                    view.appendSecLogsTXT("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nUsername: " + rs.getString(2)  + "\r\nAdmin: " + rs.getString(3) +  "\r\nDate & time: " + rs.getString(4));
+                    view.appendSecLogsTXT("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nUsername: " + rs.getString(2)  + "\r\nAdmin: " + rs.getString(3) + "\r\nSuccess: " + rs.getString(4) +  "\r\nDate & time: " + rs.getString(5));
                 }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class LoginModel {
     DBManager dbManager;
@@ -50,13 +51,24 @@ public class LoginModel {
             LogsModel logsModel = new LogsModel(user);
             LogsController logsController = new LogsController(logsView, logsModel, user);
             logsView.setVisible(true);
+            col.remove(col.size() - 1);
+            val.remove(val.size() - 1);
+            col.add("success");
+            col.add("date_time");
             val.add("TRUE");
+            val.add(new Date().toString());
             dbManager.insert("logins", col, val);
             return true;
         } catch (SQLException e) {
-            dbManager.insert("logins", col, val);
             e.printStackTrace();
         }
+        col.remove(col.size() - 1);
+        val.remove(val.size() - 1);
+        col.add("success");
+        col.add("date_time");
+        val.add("FALSE");
+        val.add(new Date().toString());
+        dbManager.insert("logins", col, val);
         return false;
     }
 
