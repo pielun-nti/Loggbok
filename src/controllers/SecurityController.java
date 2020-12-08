@@ -84,10 +84,21 @@ public class SecurityController {
         }
     }
 
-    public void getLoginLogs(){
-        model.getLoginLogs();
+    void getLoginLogs(){
+        try {
+            ResultSet rs = model.getLoginLogs();
+            view.setSecLogsTXT("");
+            while(rs.next())
+                if (view.getSecLogsTXT().trim().equals("")) {
+                    view.setSecLogsTXT("ID: " + rs.getString(1) + "\r\nUsername: " + rs.getString(2) + "\r\nDate & time: " + rs.getString(3));
+                }else{
+                    view.appendSecLogsTXT("\r\n--------------\r\nID: " + rs.getString(1) + "\r\nUsername: " + rs.getString(2) + "\r\nDate & time: " + rs.getString(3));
+                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-    public void clearLoginLogs(){
+    void clearLoginLogs(){
         model.clearLoginLogs();
     }
 }

@@ -162,6 +162,9 @@ public class SecurityView extends javax.swing.JFrame {
     public String getSecLogsTXT(){
         return txtSecLogs.getText();
     }
+    public void setSecLogsTXT(String txt){
+        txtSecLogs.setText(txt);
+    }
 
     public void appendSecLogsTXT(String text){
         txtSecLogs.append(text);

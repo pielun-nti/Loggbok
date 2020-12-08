@@ -3,6 +3,7 @@ package models;
 import config.Env;
 
 import javax.swing.*;
+import java.sql.ResultSet;
 
 public class SecurityModel {
     DBManager dbManager;
@@ -11,8 +12,12 @@ public class SecurityModel {
         dbManager = new DBManager();
     }
 
-    public void getLoginLogs(){
-
+    public ResultSet getLoginLogs(){
+        ResultSet rs = dbManager.selectAll("logins");
+        if (rs != null) {
+            return rs;
+        }
+        return null;
     }
     public void clearLoginLogs(){
         int deletedRows = dbManager.deleteAll("logins");
