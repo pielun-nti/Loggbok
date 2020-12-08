@@ -84,6 +84,7 @@ public class DB {
                         + "ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                         + "USERNAME varchar(255) DEFAULT NULL,"
                         + "ADMIN varchar(255) DEFAULT NULL,"
+                        + "SUCCESS varchar(255) DEFAULT NULL,"
                         + "DATE_TIME varchar(255) DEFAULT NULL)";
                 s = connection.createStatement();
                 s.executeUpdate(create_logs_table);
