@@ -37,6 +37,15 @@ public class LoginModel {
             ResultSet rs = dbManager.selectAllWhere("users", col, val);
             if (!rs.next()){
                 JOptionPane.showMessageDialog(null, "Invalid username or password. Access denied.", Env.LoginMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
+                col.remove(col.size() - 1);
+                val.remove(val.size() - 1);
+                col.add("success");
+                col.add("date_time");
+                col.add("admin");
+                val.add("FALSE");
+                val.add(new Date().toString());
+                val.add(Boolean.toString(false));
+                dbManager.insert("logins", col, val);
                 return false;
             }
             String adminstr = rs.getString(4);
@@ -55,8 +64,10 @@ public class LoginModel {
             val.remove(val.size() - 1);
             col.add("success");
             col.add("date_time");
+            col.add("admin");
             val.add("TRUE");
             val.add(new Date().toString());
+            val.add(Boolean.toString(user.isAdmin()));
             dbManager.insert("logins", col, val);
             return true;
         } catch (SQLException e) {
@@ -66,8 +77,10 @@ public class LoginModel {
         val.remove(val.size() - 1);
         col.add("success");
         col.add("date_time");
+        col.add("admin");
         val.add("FALSE");
         val.add(new Date().toString());
+        val.add(Boolean.toString(user.isAdmin()));
         dbManager.insert("logins", col, val);
         return false;
     }

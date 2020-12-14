@@ -21,7 +21,8 @@ public class SecurityController {
     SecurityModel model;
     User user;
 
-    public SecurityController(SecurityView view, SecurityModel model){
+    public SecurityController(SecurityView view, SecurityModel model, User user){
+        this.user = user;
         this.view = view;
         this.model = model;
         this.view.addListeners(new SecurityListener());
@@ -80,6 +81,9 @@ public class SecurityController {
                 if (command.equalsIgnoreCase("Clear Login Logs")){
                     clearLoginLogs();
                 }
+                if (command.equalsIgnoreCase("Go Back")){
+                    goBack();
+                }
             }
         }
     }
@@ -100,5 +104,13 @@ public class SecurityController {
     }
     void clearLoginLogs(){
         model.clearLoginLogs();
+    }
+
+    void goBack(){
+        LogsView logsView = new LogsView(user);
+        LogsModel logsModel = new LogsModel(user);
+        LogsController logsController = new LogsController(logsView, logsModel, user);
+        logsView.setVisible(true);
+        view.dispose();
     }
 }

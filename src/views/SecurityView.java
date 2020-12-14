@@ -14,10 +14,10 @@ import java.awt.event.WindowListener;
 public class SecurityView extends javax.swing.JFrame {
 
     JMenuBar menuBar;
-    JMenu helpMenu;
+    JMenu optionsMenu;
     JMenuItem menuItemGetLoginLogs;
     JMenuItem menuItemClearLogs;
-    JPanel mainPanel;
+    JMenuItem menuItemGoBack;
     JScrollPane scroll;
     JTextArea txtSecLogs;
     private Font mainFont;
@@ -33,8 +33,7 @@ public class SecurityView extends javax.swing.JFrame {
         Dimension res = new Dimension(1200, 800);
         setPreferredSize(res);
         setSize(res);
-        setContentPane(mainPanel);
-        setResizable(false);
+        setResizable(true);
         setLocationRelativeTo(null);
         pack();
     }
@@ -46,37 +45,39 @@ public class SecurityView extends javax.swing.JFrame {
     void setFonts(){
         setFont(mainFont);
         menuBar.setFont(mainFont);
-        helpMenu.setFont(mainFont);
+        optionsMenu.setFont(mainFont);
         menuItemGetLoginLogs.setFont(mainFont);
+        menuItemGoBack.setFont(mainFont);
         menuItemClearLogs.setFont(mainFont);
         txtSecLogs.setFont(mainFont);
     }
 
     void initComponents(){
         setTitle("Security - logged in as: " + user.getUsername());
-        mainPanel = new JPanel();
         menuBar = new JMenuBar();
-        helpMenu = new JMenu("Help");
+        optionsMenu = new JMenu("Options");
         mainFont = new Font("Verdana", Font.BOLD, fontSize);
         menuItemGetLoginLogs = new JMenuItem("Get Login Logs");
         menuItemClearLogs = new JMenuItem("Clear Login Logs");
+        menuItemGoBack = new JMenuItem("Go Back");
         txtSecLogs = new JTextArea();
         scroll = new JScrollPane(txtSecLogs,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     }
 
     void addComponents() {
-        helpMenu.add(menuItemGetLoginLogs);
-        helpMenu.add(menuItemClearLogs);
-        menuBar.add(helpMenu);
+        optionsMenu.add(menuItemGetLoginLogs);
+        optionsMenu.add(menuItemClearLogs);
+        optionsMenu.add(menuItemGoBack);
+        menuBar.add(optionsMenu);
         setJMenuBar(menuBar);
-        mainPanel.setLayout(null);
-        mainPanel.add(scroll);
+        add(scroll);
     }
 
     public void addListeners(ActionListener listener){
         menuItemClearLogs.addActionListener(listener);
         menuItemGetLoginLogs.addActionListener(listener);
+        menuItemGoBack.addActionListener(listener);
     }
 
     public void addFrameWindowListener(WindowListener listener){
@@ -87,12 +88,12 @@ public class SecurityView extends javax.swing.JFrame {
         this.menuBar = menuBar;
     }
 
-    public JMenu getHelpMenu() {
-        return helpMenu;
+    public JMenu getoptionsMenu() {
+        return optionsMenu;
     }
 
-    public void setHelpMenu(JMenu helpMenu) {
-        this.helpMenu = helpMenu;
+    public void setoptionsMenu(JMenu optionsMenu) {
+        this.optionsMenu = optionsMenu;
     }
 
     public JMenuItem getMenuItemGetLoginLogs() {
@@ -111,13 +112,6 @@ public class SecurityView extends javax.swing.JFrame {
         this.menuItemClearLogs = menuItemClearLogs;
     }
 
-    public JPanel getMainPanel() {
-        return mainPanel;
-    }
-
-    public void setMainPanel(JPanel mainPanel) {
-        this.mainPanel = mainPanel;
-    }
 
     public JScrollPane getScroll() {
         return scroll;
