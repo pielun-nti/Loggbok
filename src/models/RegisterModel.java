@@ -14,8 +14,10 @@ public class RegisterModel {
 
     DBManager dbManager;
     User user;
+    PassUtil passUtil;
     public RegisterModel(){
         dbManager = new DBManager();
+        passUtil = new PassUtil();
     }
 
     public boolean Register(String username, String password){
@@ -45,7 +47,7 @@ public class RegisterModel {
         col.add("username");
         col.add("password");
         val.add(username);
-        val.add(password);
+        val.add(passUtil.toHexString(passUtil.getSHA256(password)));
             dbManager.insert("users", col, val);
             user = new User(username, false);
             LogsView logsView = new LogsView(user);

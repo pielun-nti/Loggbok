@@ -5,6 +5,7 @@ import controllers.LogsController;
 import views.LogsView;
 
 import javax.swing.*;
+import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,11 +15,13 @@ import java.util.Date;
 public class LoginModel {
     DBManager dbManager;
     User user;
+    PassUtil passUtil;
     public LoginModel(){
         dbManager = new DBManager();
+        passUtil = new PassUtil();
     }
 
-    public boolean Login(String username, String password){
+    public boolean Login(String username, String password) {
         if (username == null || password == null){
             JOptionPane.showMessageDialog(null, "Username or password cannot be null.", Env.LoginMessageBoxTitle, JOptionPane.ERROR_MESSAGE);
             return false;
@@ -32,7 +35,7 @@ public class LoginModel {
         col.add("username");
         col.add("password");
         val.add(username);
-        val.add(password);
+        val.add(passUtil.toHexString(passUtil.getSHA256(password)));
         try {
             ResultSet rs = dbManager.selectAllWhere("users", col, val);
             if (!rs.next()){
