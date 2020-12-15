@@ -49,12 +49,39 @@ public class LogsModel {
         return null;
     }
 
+    public String readLogsFromTextFile(String path){
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(path));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     public String openFileDialog(){
         final JFileChooser openFileChooser = new JFileChooser();
         openFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         openFileChooser.setApproveButtonText("Open Log");
-        openFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Data File", "dat"));
-        openFileChooser.setFileFilter(new FileNameExtensionFilter("Txt file", "txt"));
+        openFileChooser.setFileFilter(new FileNameExtensionFilter("Data File", "dat"));
+        openFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Txt file", "txt"));
         int actionDialog = openFileChooser.showOpenDialog(null);
         if (actionDialog != JFileChooser.APPROVE_OPTION) {
             return null;
@@ -65,6 +92,15 @@ public class LogsModel {
         }
         if (file.getName().endsWith(".dat")){
             String data = readLogsFromDataFile(file.getAbsolutePath());
+            if (data == null) {
+                JOptionPane.showMessageDialog(null, "Error reading logs data from file: " + file.getAbsolutePath(), Env.LogsMessageBoxTitle, JOptionPane.WARNING_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(null, "Opened log data successfully!", Env.LogsMessageBoxTitle, JOptionPane.WARNING_MESSAGE);
+                return data;
+            }
+        }
+        if (file.getName().endsWith(".txt")){
+            String data = readLogsFromTextFile(file.getAbsolutePath());
             if (data == null) {
                 JOptionPane.showMessageDialog(null, "Error reading logs data from file: " + file.getAbsolutePath(), Env.LogsMessageBoxTitle, JOptionPane.WARNING_MESSAGE);
             }else{
