@@ -149,7 +149,7 @@ public class LogsController{
         }
 
     /**
-     * Logout out the user. Logout the user and shows login gui and disposes current logs view.
+     * Logout out the user. Shows login gui and disposes current logs view.
      */
         void Logout(){
             LoginView loginView = new LoginView();
@@ -161,7 +161,7 @@ public class LogsController{
         }
 
     /**
-     * Open security gui. Opens security gui and disposes current logs gui.
+     * Opens security gui. Disposes current logs gui.
      */
     void openSecurity(){
         SecurityView securityView = new SecurityView(user);
@@ -190,7 +190,7 @@ public class LogsController{
     }
 
     /**
-     * Tells the model to open a file dialog. Tells the model to open a JFileChooser dialog and waits for user to select file.
+     * Tells the model to open a file dialog. Also waits for user to select file.
      * Then the model returns the data found in the selected file and then shows it in the logsview textarea.
      */
     void openFileDialog(){
@@ -215,7 +215,7 @@ public class LogsController{
     }
 
     /**
-     * Tells logsmodel to get all log history from database and then logsmodel turns it into a resultset and
+     * Gets and print log history. Tells logsmodel to get all log history from database and then logsmodel turns it into a resultset and
      * returns it here, then this method loops through all log history rows and print them out in the logsview textarea.
      */
     void getLogHistory(){
