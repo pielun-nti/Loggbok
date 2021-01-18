@@ -21,6 +21,12 @@ public class LogsController{
     LogsModel model;
     User user;
 
+    /**
+     * Controls both the logs view and logs model. LogsController adds ActionListener and FrameWindowListener.
+     * @param view
+     * @param model
+     * @param user
+     */
     public LogsController(LogsView view, LogsModel model, User user){
         this.view = view;
         this.model = model;
@@ -36,6 +42,10 @@ public class LogsController{
 
         }
 
+        /**
+         * Closes window without terminating process. Hides window without terminating process on windowclosing.
+         * @param windowEvent
+         */
         @Override
         public void windowClosing(WindowEvent windowEvent) {
                     view.dispose();
@@ -69,7 +79,11 @@ public class LogsController{
     }
 
     private class LogsListener implements ActionListener {
-
+        /**
+         * Listens for JMenuItem and JCheckBoxMenuItem clicks and then executes methods. Onactionperformed gets called
+         * when a JMenuItem or JCheckBoxMenuItem gets clicked by user and then it executes methods.
+         * @param actionEvent
+         */
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             String command = actionEvent.getActionCommand();
@@ -134,6 +148,9 @@ public class LogsController{
         }
         }
 
+    /**
+     * Logout out the user. Logout the user and shows login gui and disposes current logs view.
+     */
         void Logout(){
             LoginView loginView = new LoginView();
             LoginModel loginModel = new LoginModel();
@@ -143,6 +160,9 @@ public class LogsController{
             view.dispose();
         }
 
+    /**
+     * Open security gui. Opens security gui and disposes current logs gui.
+     */
     void openSecurity(){
         SecurityView securityView = new SecurityView(user);
         SecurityModel securityModel = new SecurityModel(user);
@@ -151,6 +171,9 @@ public class LogsController{
         view.dispose();
     }
 
+    /**
+     * Get all logs. Tells the model to get all logs from database into a resultset and then loop through all log rows and prints them out in the logsview textarea.
+     */
     void getAllLogs(){
         try {
             ResultSet rs = model.getAllLogs();
@@ -166,6 +189,10 @@ public class LogsController{
         }
     }
 
+    /**
+     * Tells the model to open a file dialog. Tells the model to open a JFileChooser dialog and waits for user to select file.
+     * Then the model returns the data found in the selected file and then shows it in the logsview textarea.
+     */
     void openFileDialog(){
         String data = model.openFileDialog();
         if (data != null) {
@@ -173,14 +200,24 @@ public class LogsController{
         }
     }
 
+    /**
+     * Tells logsmodel to delete all logs.
+     */
     void deleteAllLogs(){
         model.deleteAllLogs();
     }
 
+    /**
+     * Tells logsmodel to delete all log history.
+     */
     void deleteAllLogHistory(){
         model.deleteAllLogHistory();
     }
 
+    /**
+     * Tells logsmodel to get all log history from database and then logsmodel turns it into a resultset and
+     * returns it here, then this method loops through all log history rows and print them out in the logsview textarea.
+     */
     void getLogHistory(){
         try {
 
@@ -205,22 +242,39 @@ public class LogsController{
         }
     }
 
+    /**
+     * Tells logsmodel to edit log. Tells logmodel to ask user for edit input.
+     */
     void editLog(){
         model.editLog();
     }
 
+    /**
+     * Tells logsmodel to delete a certain log.
+     */
     void deleteLog(){
         model.deleteLog();
     }
 
+    /**
+     * Tells logmodel to create a new log.
+     */
     void createNewLog(){
         model.createNewLog();
     }
 
+    /**
+     * Tells logmodel to open a JFileChooser dialog. With intent to save current logsview textarea data,
+     * it tells logmodel to open a JFileChooser dialog.
+     */
     private void saveFileDialog() {
        model.saveFileDialog(view.getLogsTXT());
     }
 
+    /**
+     * Tells logsmodel to filter logs from database. When logsmodel returns a resultset of the filtered logs by certain keywords given from the user input,
+     * this method will loop through the resultset and print out the filtered logs.
+     */
     void filterLogs(){
         try {
             ResultSet rs = model.filterLogs();
