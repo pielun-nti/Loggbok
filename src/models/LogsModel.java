@@ -20,7 +20,12 @@ public class LogsModel {
         this.user = user;
     }
 
-
+    /**
+     * Sparar textloggar till en fil på en viss sökväg. Den skriver det som läsbar UTF och inte binär kod.
+     * @param path Sökväg till fil
+     * @param data Text som ska sparas
+     * @return boolean true/false
+     */
     public boolean saveLogsToDataFile(String path, String data){
         DataOutputStream out = null;
         try {
@@ -36,6 +41,11 @@ public class LogsModel {
         return false;
     }
 
+    /**
+     * Läser in data från en fil på en viss sökväg och läser UTF8
+     * @param path Sökväg
+     * @return Loggdata
+     */
     public String readLogsFromDataFile(String path){
         DataInputStream in = null;
         try {
@@ -49,6 +59,11 @@ public class LogsModel {
         return null;
     }
 
+    /**
+     * Läser nästa rad i en fil vid en viss sökväg
+     * @param path Sökväg
+     * @return Loggdata
+     */
     public String readLogsFromTextFile(String path){
         BufferedReader br = null;
         try {
@@ -76,6 +91,10 @@ public class LogsModel {
         return null;
     }
 
+    /**
+     * Öppnar JFileChooser dialog. Där användaren kan välja .txt eller .dat filer och programmet läser då in dem.
+     * @return Text från filen användaren valt.
+     */
     public String openFileDialog(){
         final JFileChooser openFileChooser = new JFileChooser();
         openFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -111,6 +130,10 @@ public class LogsModel {
         return null;
     }
 
+    /**
+     * Kontaktar databasen med dbManager och väljer alla rader i tabellen logs och om det finns så returnar den resultatdatan.
+     * @return ResultSet med alla loggar och dess data
+     */
     public ResultSet getAllLogs(){
         ResultSet rs = dbManager.selectAll("logs");
         if (rs != null) {
