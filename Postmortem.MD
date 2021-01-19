@@ -12,8 +12,9 @@ Jag kommenterade också en del i koden för att komma ihåg vad jag har gjort oc
 Detta var vanliga kommentarer och inte JavaDocs, men jag vet hur man använder JavaDocs och kommer visa det. Jag har i slutet av arbetet börja skriva JavaDocs kommentarer eftersom läraren sa det, hade han sagt det i början så skulle jag gjort det redan då.
 När det centrala var klart så började jag skriva fler funktioner som inte är nödvändiga men för att göra loggboken bättre och mer användbar.
 En del av programmet skrev jag i enskilda klasser även fast jag kunde och använt mvc i mina privata projekt innan.
-Sedan när läraren sa att vi skulle använda MVC så skrev jag om allt till MVC så att en controller kontrollerar modellen och designen och att koden är separerad.
+Sedan när läraren sa att vi skulle använda MVC så skrev jag om allt till MVC så att en controller kontrollerar modellen och designen och att koden är separerad i olika filer.
 Att använda mvc gör så att det blir mer organiserat att arbeta tycker jag.
+Hela programmet har ett grafiskt gränssnitt (Swing JFrame) och all grafisk gränssnitt är separerad i egna filer utifrån MVC.
 Bland annat så har jag gjort en DBManager som kan användas i vilket Java program som helst för framtida databasprogram.
 Loggboken har bland annat dessa funktioner:
 <br>
