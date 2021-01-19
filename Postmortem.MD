@@ -15,6 +15,8 @@ En del av programmet skrev jag i enskilda klasser även fast jag kunde och anvä
 Sedan när läraren sa att vi skulle använda MVC så skrev jag om allt till MVC så att en controller kontrollerar modellen och designen och att koden är separerad i olika filer.
 Att använda mvc gör så att det blir mer organiserat att arbeta tycker jag.
 Hela programmet har ett grafiskt gränssnitt (Swing JFrame) och all grafisk gränssnitt är separerad i egna filer utifrån MVC.
+Det grafiska gränsnittet alltså views, de skrev jag själv och brukar nästan alltid göra istället för att använda IntelliJ designer.
+Jag vet hur man använder IntelliJ gui designer också, men jag är van att skriva koden för dessa klasser själv istället.
 Bland annat så har jag gjort en DBManager som kan användas i vilket Java program som helst för framtida databasprogram.
 Loggboken har bland annat dessa funktioner:
 <br>
