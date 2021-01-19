@@ -9,6 +9,7 @@ Jag har gjort mer än så.
 Jag började med att göra ett litet klassdiagram och tänka igenom vilka klasser jag ska börja med.
 Sedan började jag skriva koden. Jag började med att programmera de centrala delarna i loggboken.
 Jag kommenterade också en del i koden för att komma ihåg vad jag har gjort och ska göra härnäst.
+Detta var vanliga kommentarer och inte JavaDocs, men jag vet hur man använder JavaDocs och kommer visa det. Jag har i slutet av arbetet börja skriva JavaDocs kommentarer eftersom läraren sa det, hade han sagt det i början så skulle jag gjort det redan då.
 När det centrala var klart så började jag skriva fler funktioner som inte är nödvändiga men för att göra loggboken bättre och mer användbar.
 En del av programmet skrev jag i enskilda klasser även fast jag kunde och använt mvc i mina privata projekt innan.
 Sedan när läraren sa att vi skulle använda MVC så skrev jag om allt till MVC så att en controller kontrollerar modellen och designen och att koden är separerad.
