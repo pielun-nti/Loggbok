@@ -53,7 +53,7 @@ inte kan crackas lätt, men man kan kolla att det stämmer. Den kollar om input 
 <br>
 Man kan även logga in som anonym
 <br>
-Registreringssystem, username och password hashas och läggs in i db
+Registreringssystem, username och password (pass hashas) och läggs in i db
 <br>
 Om mysql servern är nere så stängs programmet
 <br>
